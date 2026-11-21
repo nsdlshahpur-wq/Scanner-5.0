@@ -12,6 +12,7 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 | `trader-india/bse.py` | Independent BSE daily scanner using `.BO` tickers |
 | `trader-india/bse_intraday.py` | BSE 5-minute ORB and volume confirmation |
 | `trader-india/bse-universe.csv` | Curated BSE scrip-code starter universe |
+| `trader-india/bse_universe.py` | Import a user-downloaded BSE scrip master CSV |
 | `trader-india/sectors.py` | Relative-strength snapshot for the curated sector map |
 | `trader-india/derivatives.py` | Offline F&O futures OI buildup classification from normalized CSV |
 | `trader-india/universe.py` | Validate/import a user-downloaded NSE equity master CSV |
