@@ -6,7 +6,7 @@ normalized schema. No credentials, broker API or order endpoint is used.
 """
 import argparse,csv,json,os
 
-REQUIRED=("symbol","instrument","expiry","open_interest","change_in_oi","volume","close","underlying_close")
+REQUIRED=("symbol","instrument","expiry","open_interest","change_in_oi","volume","close","underlying_close")\nOPTIONAL=("previous_underlying_close",)
 ALIASES={"symbol":["symbol","underlying","ticker"],"instrument":["instrument","instrument_type"],
  "expiry":["expiry","expiry_dt","expiry_date"],"open_interest":["open_interest","oi","openint"],
  "change_in_oi":["change_in_oi","chg_in_oi","change_oi"],"volume":["volume","contracts"],
@@ -21,7 +21,7 @@ def normalize_row(row):
         out[key]=value
     for key in ("open_interest","change_in_oi","volume","close","underlying_close"):
         out[key]=float(str(out[key]).replace(",",""))
-    out["symbol"]=str(out["symbol"]).strip().upper()
+    previous=next((low[a] for a in ("previous_underlying_close","prev_underlying_close","prev_close") if a in low and low[a] not in (None,"")),None)\n    out["previous_underlying_close"]=float(str(previous).replace(",","")) if previous is not None else None\n    out["symbol"]=str(out["symbol"]).strip().upper()
     out["instrument"]=str(out["instrument"]).strip().upper()
     return out
 
