@@ -92,7 +92,8 @@ class PaperSizing(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path = os.path.join(folder, "ledger.json")
             paper.append_paper_record(path, {"symbol":"TEST","quantity":1})
-            rows = json.load(open(path, encoding="utf-8"))
+            with open(path, encoding="utf-8") as handle:
+                rows = json.load(handle)
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0]["mode"], "paper_only")
 
