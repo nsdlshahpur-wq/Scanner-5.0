@@ -44,14 +44,16 @@ def append_paper_record(path, record):
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as handle:
         json.dump(rows, handle, indent=2)
-        handle.write("\n")
+        handle.write("
+")
     os.replace(tmp, path)
     return record
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Scanner 5.0 conservative paper position sizing")
-    parser.add_argument("--symbol", required=True)\n    parser.add_argument("--exchange", choices=("NSE", "BSE"), default="NSE")
+    parser.add_argument("--symbol", required=True)
+    parser.add_argument("--exchange", choices=("NSE", "BSE"), default="NSE")
     parser.add_argument("--capital", type=float, required=True)
     parser.add_argument("--entry", type=float, required=True)
     parser.add_argument("--stop", type=float, required=True)
@@ -60,7 +62,8 @@ def main(argv=None):
     parser.add_argument("--record", help="Append sizing plan to a local paper ledger JSON file")
     args = parser.parse_args(argv)
     plan = size_position(args.capital, args.entry, args.stop, args.risk_pct, args.max_position_pct)
-    plan["symbol"] = args.symbol.strip().upper()\n    plan["exchange"] = args.exchange
+    plan["symbol"] = args.symbol.strip().upper()
+    plan["exchange"] = args.exchange
     print(json.dumps(plan, indent=2))
     if args.record:
         append_paper_record(args.record, plan)
