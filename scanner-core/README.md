@@ -8,7 +8,10 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 | --- | --- |
 | `trader-scanner` | Existing US-listed stock scanner |
 | `trader-india/india.py` | NSE daily setups: 20-day breakout, bull flag, MA20 reclaim, RSI-14 and oversold bounce |
-| `trader-india/intraday.py` | NSE completed 5-minute candles, 15-minute ORB and volume confirmation |\n| `trader-india/bse.py` | Independent BSE daily scanner using `.BO` tickers |\n| `trader-india/bse_intraday.py` | BSE 5-minute ORB and volume confirmation |\n| `trader-india/bse-universe.csv` | Curated BSE scrip-code starter universe |
+| `trader-india/intraday.py` | NSE completed 5-minute candles, 15-minute ORB and volume confirmation |
+| `trader-india/bse.py` | Independent BSE daily scanner using `.BO` tickers |
+| `trader-india/bse_intraday.py` | BSE 5-minute ORB and volume confirmation |
+| `trader-india/bse-universe.csv` | Curated BSE scrip-code starter universe |
 | `trader-india/sectors.py` | Relative-strength snapshot for the curated sector map |
 | `trader-india/derivatives.py` | Offline F&O futures OI buildup classification from normalized CSV |
 | `trader-india/universe.py` | Validate/import a user-downloaded NSE equity master CSV |
@@ -23,9 +26,12 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 Run commands from `scanner-core`:
 
 ```bash
-python trader-india/india.py --universe trader-india/universe.csv --output trader/india-daily.json\npython trader-india/bse.py --universe trader-india/bse-universe.csv --output trader/bse-daily.json\npython trader-india/bse_intraday.py --universe trader-india/bse-universe.csv --output trader/bse-intraday.json
+python trader-india/india.py --universe trader-india/universe.csv --output trader/india-daily.json
+python trader-india/bse.py --universe trader-india/bse-universe.csv --output trader/bse-daily.json
+python trader-india/bse_intraday.py --universe trader-india/bse-universe.csv --output trader/bse-intraday.json
 python trader-india/intraday.py --universe trader-india/universe.csv --output trader/india-intraday.json
-python trader-india/sectors.py --universe trader-india/universe.csv --output trader/sector-strength.json\npython trader-india/sectors.py --exchange BSE --universe trader-india/bse-universe.csv --output trader/bse-sector-strength.json
+python trader-india/sectors.py --universe trader-india/universe.csv --output trader/sector-strength.json
+python trader-india/sectors.py --exchange BSE --universe trader-india/bse-universe.csv --output trader/bse-sector-strength.json
 python trader-india/alerts.py --input trader/india-intraday.json --output trader/india-alerts.json
 python trader-india/dashboard.py --input Daily=trader/india-daily.json --input Intraday=trader/india-intraday.json --output trader/india-dashboard.html
 ```
@@ -56,7 +62,8 @@ It classifies futures long buildup, short buildup, short covering and long unwin
 
 ```bash
 python trader-india/paper.py --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-sizing.json
-python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange NSE --symbol RELIANCE --qty 5 --entry 1500 --stop 1480\npython trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange BSE --symbol 500325 --qty 5 --entry 1500 --stop 1480
+python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange NSE --symbol RELIANCE --qty 5 --entry 1500 --stop 1480
+python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange BSE --symbol 500325 --qty 5 --entry 1500 --stop 1480
 python trader-india/portfolio.py --ledger trader/paper-portfolio.json mark --prices /path/to/prices.json  # keys: NSE:RELIANCE, BSE:500325
 python trader-india/portfolio.py --ledger trader/paper-portfolio.json close --symbol RELIANCE --price 1520 --fee 5
 ```
