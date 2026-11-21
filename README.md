@@ -1,15 +1,13 @@
-# Scanner-5.0
+# Scanner 5.0
 
-## Day Trader Skill (upstream submodule)
+## Vendored day-trader-skill
 
-The complete upstream Day Trader Skill project is linked at `day-trader-skill/` as a Git submodule, pinned to upstream commit `3d0f4ef6986f4984b7c6bd46f7ff4f87744c3abd`.
+The upstream `day-trader-skill` project is included in this repository under [`day-trader-skill/`](day-trader-skill/).
 
-Initialize and download its complete source:
+- Upstream: https://github.com/Jakeschincariol/day-trader-skill
+- Imported commit: `3d0f4ef6986f4984b7c6bd46f7ff4f87744c3abd`
+- Includes the skill instructions, Python modules, plugin metadata, license, documentation, and text-based test fixtures.
 
-```bash
-git submodule update --init --recursive
-```
+Three binary-only test fixtures (`2026FD.zip`, `wall5m-2026-10-19.json.gz`, and `TSLA-60d5m.json.gz`) could not be transferred through the connected GitHub file interface and are not included in this vendored copy. The source code and other text fixtures are included.
 
-Upstream project: https://github.com/Jakeschincariol/day-trader-skill
-
-This keeps the original author's files and license intact and avoids presenting an incomplete copy as a full import. The submodule is pinned to a specific commit; it does not automatically track later upstream changes.
+See `day-trader-skill/README.md` for upstream setup and usage details.
