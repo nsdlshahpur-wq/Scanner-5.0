@@ -1,28 +1,21 @@
 # Scanner 5.0
 
-A modular market-analysis toolkit for researching stocks, monitoring market news, identifying technical setups, planning entries and exits, sizing positions, applying risk controls, and reviewing historical scenarios.
+A modular market-analysis toolkit for US and Indian stock research. Existing US Scanner modules are preserved; the NSE scanner is being added as an independent engine with separate data handling and conservative paper-trading controls.
 
 ## Project structure
 
-- [scanner-core/](scanner-core/) — Python tools, skill instructions, plugin metadata, documentation, and offline tests.
+- [scanner-core/](scanner-core/) — Python tools, modules, documentation and offline tests.
+- [scanner-core/trader-india/](scanner-core/trader-india/) — NSE scanner and paper-only sizing.
 - [.github/workflows/scanner-tests.yml](.github/workflows/scanner-tests.yml) — automated Python test workflow.
 
-## Included capabilities
+## Current capabilities
 
-- Market scanning and technical setup detection
-- News and company-filing monitoring
-- Entry timing and exit planning
-- Historical scenario simulation
-- Position sizing and risk checks
-- Broker ticket preparation with paper mode as the default
-- Price alerts, earnings analysis, and public congressional-trade disclosures
+- Existing US market scanning, news, entry/exit, risk, budget, alerts and historical simulation.
+- NSE daily technical scanner: 20-session closing breakout, bull flag, MA20 reclaim, RSI-14 oversold and oversold bounce.
+- Conservative paper position sizing and local paper ledger.
+
+The NSE universe supplied in the repository is a curated starter watchlist, not the complete NSE listing. Yahoo Finance data is unofficial and may be delayed or incomplete. NSE F&O and broader market modules are planned, not yet implemented.
 
 ## Important
 
-The tools are research and decision-support software, not financial advice or a guarantee of results. Market data may be delayed or incomplete. Broker actions require explicit user approval; paper trading should be used while testing.
-
-The imported source retains its MIT license and original attribution in `scanner-core/LICENSE`.
-
-Three upstream binary test fixtures were unavailable through the connected repository interface and are not included: `2026FD.zip`, `wall5m-2026-10-19.json.gz`, and `TSLA-60d5m.json.gz`. The available source files and text-based fixtures are retained.
-
-See [scanner-core/README.md](scanner-core/README.md) for setup and usage.
+Research and decision-support software only. No live broker orders are sent by the NSE module. Paper mode is the default development mode. Never treat a signal as a buy recommendation.

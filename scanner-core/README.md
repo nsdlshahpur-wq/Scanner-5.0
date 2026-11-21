@@ -1,50 +1,51 @@
 # Scanner 5.0 - Market Analysis Toolkit
 
-A collection of modular skills and Python utilities for stock-market research, technical scanning, news monitoring, trade planning, position sizing, risk checks, and historical scenario analysis.
+A modular research and decision-support toolkit for US and Indian equities. Existing US modules are retained. The NSE engine is a separate module with its own symbol universe, market timezone, data adapter, indicators and paper-trading controls.
 
-The toolkit reads public market and regulatory data. It does not place orders automatically. Broker tickets require explicit confirmation, and paper mode is the default.
-
-## Modules
+## Markets and modules
 
 | Module | Purpose |
 | --- | --- |
-| `trader-scanner` | Scans a stock universe for technical setups |
-| `trader-news` | Monitors market headlines and company filings |
-| `trader-entry` | Tracks setup conditions and entry timing |
-| `trader-exit` | Prepares stop-loss and target plans |
-| `trader-timemachine` | Simulates historical and potential scenarios |
-| `trader-risk` | Checks orders against risk limits |
-| `trader-budget` | Calculates position size from account limits |
-| `trader-broker` | Prepares broker tickets; paper mode by default |
-| `trader-alerts` | Monitors configured price and time alerts |
-| `trader-analyst` | Summarizes earnings and company fundamentals |
-| `trader-pelosi` | Reads publicly disclosed congressional trades |
+| \`trader-scanner\` | Existing US-listed stock scanner (NYSE / NASDAQ) |
+| \`trader-india\` | NSE daily technical scanner and conservative paper sizing |
+| \`trader-news\` | US market headlines and company filings |
+| \`trader-entry\` / \`trader-exit\` | Setup timing and exit planning |
+| \`trader-risk\` / \`trader-budget\` | Risk checks and position sizing |
+| \`trader-timemachine\` | Historical scenario simulation |
+| \`trader-broker\` | Existing broker ticket preparation; do not enable live orders during development |
 
-## Requirements
-
-- Python 3.8 or newer
-- Standard library only; no additional package installation is required for the included tools
-- SEC data access requires a valid identifying user-agent string in the relevant configuration or `SEC_USER_AGENT` environment variable
-
-## Run the tests
+## NSE quick start
 
 From this directory:
 
-```bash
+\`\`\`bash
+python trader-india/india.py --universe trader-india/universe.csv --output trader/india-watchlist.json
+python trader-india/india.py --symbols RELIANCE,TCS,INFY
+python trader-india/paper.py --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-ledger.json
+\`\`\`
+
+The included CSV is a curated starter watchlist, not the complete NSE universe. Supply an updated CSV with a \`symbol\` column to scan more securities. Daily setups include 20-session closing breakout, bull flag, MA20 reclaim, RSI-14 oversold and oversold bounce. The unfinished current-day daily candle is excluded before 15:45 IST. Intraday opening-range analysis uses completed 5-minute bars and the first 15 minutes of the NSE session.
+
+## Conservative paper mode
+
+- Default risk budget: 0.5% of capital per trade.
+- Maximum position notional: 20% of capital.
+- Paper ledger is local JSON; it does not connect to a broker.
+- No order is transmitted, and a signal is not a buy recommendation.
+- Backtest results and paper fills must include fees, slippage, gaps and corporate actions before any live consideration.
+
+## Data limitations
+
+The NSE module currently uses Yahoo Finance's unofficial chart endpoint for public price history. It may lag, rate-limit, omit symbols or contain adjusted/split-related data. NSE F&O open interest, official bhavcopy ingestion, full-market universe refresh, sector breadth and live alerts are planned subsequent phases and are not claimed as implemented yet. Never treat incomplete scans as full-market coverage.
+
+## Tests
+
+\`\`\`bash
 python -m unittest discover -s tests -v
-```
+\`\`\`
 
-The test suite uses the published local fixtures and is designed to run offline.
+The tests are offline and deterministic. Live data quality and paper-trading validation are separate acceptance gates.
 
-## Safety and limitations
+## Safety
 
-- This software is for research and decision support, not financial, legal, or tax advice.
-- Market data providers may change endpoints, delay data, or impose rate limits.
-- Simulations describe assumptions and historical observations; they do not predict future results.
-- Stop prices are not guaranteed execution prices, especially during fast markets or price gaps.
-- Keep broker credentials in environment variables or secure local configuration, never in chat or source control.
-- Keep broker tools in approval-required mode. Review every order before confirming it.
-
-## License and attribution
-
-MIT License. Original copyright and attribution are preserved in `LICENSE`.
+For research and education only, not financial advice. All trading remains paper-only during development. Do not place real orders or store broker credentials in this project.
