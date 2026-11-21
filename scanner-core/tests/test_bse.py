@@ -50,7 +50,7 @@ class BSESupport(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             source=os.path.join(folder,"master.csv");dest=os.path.join(folder,"universe.csv")
             with open(source,"w",newline="",encoding="utf-8") as handle:
-                handle.write("SCRIP_CD,Scrip_Name\\n500325,Reliance\\nBAD,Invalid\\n500325,Duplicate\\n")
+                handle.write("SCRIP_CD,Scrip_Name\n500325,Reliance\nBAD,Invalid\n500325,Duplicate\n")
             result=bse_universe.import_bse_master(source,dest)
             self.assertEqual(result["accepted"],1)
             self.assertEqual(result["rejected"],1)
