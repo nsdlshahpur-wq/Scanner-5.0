@@ -21,7 +21,7 @@ def _load(path):
 
 def _save(path,data):
     os.makedirs(os.path.dirname(os.path.abspath(path)),exist_ok=True);tmp=path+".tmp"
-    with open(tmp,"w",encoding="utf-8") as handle:json.dump(data,handle,indent=2);handle.write("\\n")
+    with open(tmp,"w",encoding="utf-8") as handle:json.dump(data,handle,indent=2);handle.write("\n")
     os.replace(tmp,path)
 
 def positions(data):
