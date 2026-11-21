@@ -2,7 +2,7 @@ name: Scanner 5.0 tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, scanner-5.0-nse-paper]
   pull_request:
     branches: [main]
   workflow_dispatch:

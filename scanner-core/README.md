@@ -1,50 +1,133 @@
 # Scanner 5.0 - Market Analysis Toolkit
 
-A collection of modular skills and Python utilities for stock-market research, technical scanning, news monitoring, trade planning, position sizing, risk checks, and historical scenario analysis.
-
-The toolkit reads public market and regulatory data. It does not place orders automatically. Broker tickets require explicit confirmation, and paper mode is the default.
+A modular research and decision-support toolkit for US and Indian equities. Existing US modules are preserved. NSE and BSE use separate exchange adapters and starter universes, with an exchange-aware paper-only portfolio.
 
 ## Modules
 
 | Module | Purpose |
 | --- | --- |
-| `trader-scanner` | Scans a stock universe for technical setups |
-| `trader-news` | Monitors market headlines and company filings |
-| `trader-entry` | Tracks setup conditions and entry timing |
-| `trader-exit` | Prepares stop-loss and target plans |
-| `trader-timemachine` | Simulates historical and potential scenarios |
-| `trader-risk` | Checks orders against risk limits |
-| `trader-budget` | Calculates position size from account limits |
-| `trader-broker` | Prepares broker tickets; paper mode by default |
-| `trader-alerts` | Monitors configured price and time alerts |
-| `trader-analyst` | Summarizes earnings and company fundamentals |
-| `trader-pelosi` | Reads publicly disclosed congressional trades |
+| `trader-scanner` | Existing US-listed stock scanner |
+| `trader-news` | Existing US market news and filing research |
+| `trader-entry` | Existing US setup and entry timing |
+| `trader-exit` | Existing US stop-loss and exit planning |
+| `trader-timemachine` | Existing historical scenario simulation |
+| `trader-risk` | Existing US risk controls |
+| `trader-budget` | Existing US position sizing |
+| `trader-broker` | Existing US broker ticket preparation |
+| `trader-alerts` | Existing US alert monitoring |
+| `trader-analyst` | Existing company and earnings analysis |
+| `trader-pelosi` | Existing public congressional-trade disclosures |
+| `trader-india/india.py` | NSE daily setups: 20-day breakout, bull flag, MA20 reclaim, RSI-14 and oversold bounce |
+| `trader-india/intraday.py` | NSE completed 5-minute candles, 15-minute ORB and volume confirmation |
+| `trader-india/bse.py` | Independent BSE daily scanner using `.BO` tickers |
+| `trader-india/bse_intraday.py` | BSE 5-minute ORB and volume confirmation |
+| `trader-india/bse-universe.csv` | Curated BSE scrip-code starter universe |
+| `trader-india/bse_universe.py` | Import a user-downloaded BSE scrip master CSV |
+| `trader-india/sectors.py` | Relative-strength snapshot for curated NSE/BSE sector maps |
+| `trader-india/derivatives.py` | Offline NSE F&O futures OI buildup classification from normalized CSV |
+| `trader-india/universe.py` | Validate/import a user-downloaded NSE equity master CSV |
+| `trader-india/paper.py` | Exchange-labelled conservative position sizing |
+| `trader-india/portfolio.py` | Exchange-aware paper open/close, mark-to-market P&L and stop alerts |
+| `trader-india/backtest.py` | Daily breakout baseline backtest with next-open entry |
+| `trader-india/alerts.py` | Local JSON alerts; no push service or orders |
+| `trader-india/dashboard.py` | Offline HTML dashboard from scanner JSON outputs |
 
-## Requirements
+## Quick start
 
-- Python 3.8 or newer
-- Standard library only; no additional package installation is required for the included tools
-- SEC data access requires a valid identifying user-agent string in the relevant configuration or `SEC_USER_AGENT` environment variable
+Run commands from `scanner-core`:
 
-## Run the tests
+```bash
+# NSE daily and intraday
+python trader-india/india.py --universe trader-india/universe.csv --output trader/india-daily.json
+python trader-india/intraday.py --universe trader-india/universe.csv --output trader/india-intraday.json
 
-From this directory:
+# BSE daily and intraday
+python trader-india/bse.py --universe trader-india/bse-universe.csv --output trader/bse-daily.json
+python trader-india/bse_intraday.py --universe trader-india/bse-universe.csv --output trader/bse-intraday.json
+
+# Sector relative strength
+python trader-india/sectors.py --universe trader-india/universe.csv --output trader/nse-sectors.json
+python trader-india/sectors.py --exchange BSE --universe trader-india/bse-universe.csv --output trader/bse-sectors.json
+
+# Alerts and dashboard
+python trader-india/alerts.py --input trader/india-intraday.json --output trader/india-alerts.json
+python trader-india/dashboard.py --input NSE-Daily=trader/india-daily.json --input BSE-Daily=trader/bse-daily.json --output trader/combined-dashboard.html
+```
+
+## Universe refresh
+
+For NSE, import a current user-downloaded equity master:
+
+```bash
+python trader-india/universe.py --input /path/to/nse-equity-master.csv --output trader-india/universe.csv --series EQ
+```
+
+For BSE, import a current user-downloaded equity scrip master:
+
+```bash
+python trader-india/bse_universe.py --input /path/to/bse-scrip-master.csv --output trader-india/bse-universe.csv
+```
+
+Both repository universes are curated starter lists, not complete exchange listings. BSE uses numeric scrip codes mapped to Yahoo Finance `.BO` tickers. Verify each code against the current BSE scrip master and confirm feed availability before relying on scan results.
+
+## F&O / OI analysis
+
+The current derivatives CSV parser is documented for NSE F&O data. Map the downloaded exchange file to:
+
+`symbol,instrument,expiry,open_interest,change_in_oi,volume,close,underlying_close,previous_underlying_close`
+
+```bash
+python trader-india/derivatives.py --csv /path/to/normalized-nse-fo-bhavcopy.csv --output trader/nse-fo-analysis.json
+```
+
+It classifies futures long buildup, short buildup, short covering and long unwinding only when price and OI changes are available. BSE derivatives, full option-chain PCR, max pain and automated exchange downloads are not included.
+
+## Exchange-aware paper portfolio
+
+```bash
+python trader-india/paper.py --exchange NSE --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/nse-paper-sizing.json
+python trader-india/paper.py --exchange BSE --symbol 500325 --capital 100000 --entry 1500 --stop 1485 --record trader/bse-paper-sizing.json
+
+python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange NSE --symbol RELIANCE --qty 5 --entry 1500 --stop 1480
+python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange BSE --symbol 500325 --qty 5 --entry 1500 --stop 1480
+python trader-india/portfolio.py --ledger trader/paper-portfolio.json mark --prices /path/to/prices.json
+python trader-india/portfolio.py --ledger trader/paper-portfolio.json close --exchange BSE --symbol 500325 --price 1520 --fee 5
+```
+
+Price JSON should use exchange-qualified keys such as `NSE:RELIANCE` and `BSE:500325`. Legacy plain NSE symbol keys remain supported. Position sizing defaults to 0.5% risk per trade and 20% maximum notional. Marks and fills are user-supplied; stop alerts never execute orders.
+
+## Backtesting
+
+Provide a chronological OHLCV CSV with `open,high,low,close,volume` columns:
+
+```bash
+python trader-india/backtest.py --csv /path/to/daily-ohlcv.csv --capital 100000 --output trader/backtest.json
+```
+
+The baseline strategy signals on a completed close and enters at the next bar's open. Daily-bar backtests cannot fully model intraday path, gaps, liquidity, taxes or survivorship bias.
+
+## Safety and limitations
+
+- No broker credentials, broker API calls, order transmission or live execution are included.
+- Signals are rule matches, not buy/sell recommendations.
+- NSE and BSE prices currently use Yahoo Finance's unofficial chart endpoint; it may be delayed, rate-limited, incomplete or adjusted.
+- BSE intraday coverage may be missing for some scrips. Failed or missing bars are reported as errors, not fabricated.
+- Sector maps cover selected symbols only, not official full-market breadth.
+- F&O analysis currently accepts normalized user-supplied NSE derivatives CSV only.
+- Paper results require independent validation for fees, slippage, gaps, corporate actions and data quality.
+
+## Tests
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-The test suite uses the published local fixtures and is designed to run offline.
+Tests are offline and deterministic. A green unit-test run does not validate live market-data quality, trading profitability or execution behavior.
 
-## Safety and limitations
+## Preserved US scanner
 
-- This software is for research and decision support, not financial, legal, or tax advice.
-- Market data providers may change endpoints, delay data, or impose rate limits.
-- Simulations describe assumptions and historical observations; they do not predict future results.
-- Stop prices are not guaranteed execution prices, especially during fast markets or price gaps.
-- Keep broker credentials in environment variables or secure local configuration, never in chat or source control.
-- Keep broker tools in approval-required mode. Review every order before confirming it.
+The NSE and BSE engines are isolated under `trader-india`; existing US scanner modules and workflows are not repurposed as India data sources.
 
 ## License and attribution
 
-MIT License. Original copyright and attribution are preserved in `LICENSE`.
+The original imported source license and attribution are retained in LICENSE.
