@@ -8,12 +8,12 @@ description: >-
 argument-hint: "--symbols RELIANCE,TCS,INFY | --universe trader-india/universe.csv"
 ---
 
-# NSE India Scanner 5.0
+# India Equity Scanner 5.0 (NSE + BSE)
 
-The India engine is isolated from the existing US scanner. Do not reuse US
+The India engines are isolated from the existing US scanner. NSE and BSE use separate exchange adapters and symbol universes. Do not reuse US
 symbol universes, calendars or market assumptions.
 
-## Daily and intraday scans
+## NSE daily and intraday scans
 
 Run from `scanner-core`:
 
@@ -26,7 +26,7 @@ oversold and oversold bounce. Intraday requires completed 5-minute bars,
 a 15-minute opening range and a close above its high with relative volume
 confirmation. Sector snapshots are limited to the curated sector map.
 
-## Universe and derivatives data
+## NSE universe and derivatives data
 
     python trader-india/universe.py --input /path/to/nse-equity-master.csv --output trader-india/universe.csv --series EQ
     python trader-india/derivatives.py --csv /path/to/normalized-fo-bhavcopy.csv --output trader/fo-analysis.json
@@ -40,7 +40,7 @@ Futures OI classification covers long buildup, short buildup, short covering
 and long unwinding when both price and OI changes exist. Full option-chain PCR,
 max pain and automated official-file downloads are not implemented.
 
-## Paper-only risk and portfolio
+## Exchange-aware paper-only risk and portfolio
 
     python trader-india/paper.py --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-sizing.json
     python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --symbol RELIANCE --qty 5 --entry 1500 --stop 1480
@@ -73,3 +73,16 @@ risk, legal and execution validation.
 Run offline tests:
 
     python -m unittest discover -s tests -v
+
++
++## BSE scanner
++
++The BSE cash-equity adapter is separate and maps BSE numeric scrip codes to Yahoo Finance `.BO` tickers:
++
++    python trader-india/bse.py --universe trader-india/bse-universe.csv --output trader/bse-daily.json
++    python trader-india/bse.py --symbols 500325,532540
++    python trader-india/bse_intraday.py --universe trader-india/bse-universe.csv --output trader/bse-intraday.json
++    python trader-india/sectors.py --exchange BSE --universe trader-india/bse-universe.csv --output trader/bse-sectors.json
++
++The BSE starter universe contains selected scrip codes only. Check each code against the current BSE scrip master and confirm Yahoo `.BO` history/intraday availability. BSE cash coverage is not the complete BSE listing. BSE derivatives and full option-chain analytics are not included in this adapter.
++
