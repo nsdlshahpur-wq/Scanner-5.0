@@ -8,7 +8,7 @@ import argparse,csv,json,os
 
 REQUIRED=("symbol","instrument","expiry","open_interest","change_in_oi","volume","close","underlying_close")\nOPTIONAL=("previous_underlying_close",)
 ALIASES={"symbol":["symbol","underlying","ticker"],"instrument":["instrument","instrument_type"],
- "expiry":["expiry","expiry_dt","expiry_date"],"open_interest":["open_interest","oi","openint"],
+ "expiry":["expiry","expiry_dt","expiry_date"],"open_interest":["open_interest","open_int","oi","openint"],
  "change_in_oi":["change_in_oi","chg_in_oi","change_oi"],"volume":["volume","contracts"],
  "close":["close","settle_pr","close_price"],"underlying_close":["underlying_close","underlying_price","underlying_value"]}
 
