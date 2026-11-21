@@ -1,6 +1,6 @@
 # Scanner 5.0
 
-A modular market research toolkit for US and Indian equities. The existing US Scanner is preserved. The independent NSE engine adds daily and intraday screening, derivatives analysis from supplied exchange files, sector snapshots, paper portfolio tracking, backtesting, local alerts and an offline dashboard.
+A modular market research toolkit for US and Indian equities. The existing US Scanner is preserved. Independent NSE and BSE engines add daily and intraday screening, derivatives analysis from supplied exchange files, sector snapshots, paper portfolio tracking, backtesting, local alerts and an offline dashboard.
 
 ## Project structure
 
@@ -21,29 +21,29 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 - `trader-alerts` - alert monitoring
 - `trader-analyst` - company and earnings analysis
 - `trader-pelosi` - public congressional-trade disclosures
-- `trader-india` - independent NSE scanner and paper-only modules
+- `trader-india` - independent NSE/BSE scanners and exchange-aware paper-only modules
 
-## NSE capabilities
+## NSE and BSE capabilities
 
-- Daily technical setups and completed-candle handling.
-- 5-minute intraday scanner with 15-minute opening-range breakout and volume confirmation.
+- Daily technical setups and completed-candle handling for NSE and BSE.
+- 5-minute intraday scanners with 15-minute opening-range breakout and volume confirmation for NSE and BSE.
 - Curated sector relative-strength snapshot and user-supplied NSE universe import.
 - F&O futures open-interest buildup classification from normalized bhavcopy CSV.
-- Conservative position sizing, local paper portfolio, mark-to-market and stop alerts.
+- Conservative position sizing, exchange-aware local paper portfolio, mark-to-market and stop alerts.
 - Daily OHLCV baseline backtesting.
 - Local JSON alerts and offline HTML dashboard.
 
 ## Important
 
-The NSE price feed currently uses an unofficial Yahoo Finance chart endpoint and may be delayed or incomplete. F&O and full-universe imports require user-supplied exchange files. Unit tests do not validate live data or profitability. This is research software, not financial advice or a guarantee of results. No NSE broker orders are sent; paper mode only.
+NSE `.NS` and BSE `.BO` price feeds currently use an unofficial Yahoo Finance chart endpoint and may be delayed or incomplete. F&O and full-universe imports require user-supplied exchange files. Unit tests do not validate live data or profitability. This is research software, not financial advice or a guarantee of results. No NSE or BSE broker orders are sent; paper mode only.
 
 ## Safety and limitations
 
 - Do not treat scanner signals as buy or sell recommendations.
-- Do not use the NSE modules for live trading.
+- Do not use the NSE or BSE modules for live trading.
 - Verify exchange data, corporate actions, fees, slippage, gaps and liquidity.
-- The default NSE universe and sector map are curated samples, not complete market coverage.
-- F&O analysis does not yet provide full option-chain PCR, max pain or automated exchange downloads.
+- The default NSE and BSE universes and sector map are curated samples, not complete market coverage.
+- F&O analysis is currently normalized-CSV based and does not yet provide full option-chain PCR, max pain or automated exchange downloads.
 - Existing US Scanner modules are preserved and are not used as NSE data sources.
 
 ## License and attribution
