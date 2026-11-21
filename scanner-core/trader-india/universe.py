@@ -12,7 +12,7 @@ def import_universe(source,destination,series=("EQ",)):
             if not symbol or not re.fullmatch(r"[A-Z0-9&-]+",symbol) or srs not in allowed:
                 rejected.append({"row":n,"symbol":symbol,"series":srs,"reason":"invalid symbol or excluded series"});continue
             if symbol in seen:continue
-            seen.add(symbol);rows.append({"symbol":symbol,"name":(low.get("name") or low.get("company name") or "").strip()})
+            seen.add(symbol);rows.append({"symbol":symbol,"name":(low.get("name") or low.get("company name") or low.get("name of company") or "").strip()})
     os.makedirs(os.path.dirname(os.path.abspath(destination)),exist_ok=True)
     with open(destination,"w",encoding="utf-8",newline="") as f:
         writer=csv.DictWriter(f,fieldnames=["symbol","name"]);writer.writeheader();writer.writerows(rows)
