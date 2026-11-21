@@ -26,13 +26,19 @@ def sector_snapshot(symbols,fetcher=fetch_chart):
       "note":"Starter sector map covers selected liquid names only; this is not official index breadth or a complete sector index return."}
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description="NSE sector relative strength")
+    p=argparse.ArgumentParser(description="NSE/BSE sector relative strength")
     g=p.add_mutually_exclusive_group(required=True);g.add_argument("--symbols");g.add_argument("--universe")
-    p.add_argument("--output");a=p.parse_args(argv)
+    p.add_argument("--output");p.add_argument("--exchange",choices=("NSE","BSE"),default="NSE");a=p.parse_args(argv)
     if a.symbols:symbols=a.symbols.split(",")
     else:
         with open(a.universe,encoding="utf-8-sig",newline="") as f:symbols=[r["symbol"] for r in csv.DictReader(f) if r.get("symbol")]
-    result=sector_snapshot(symbols);data=json.dumps(result,indent=2)
+    if a.exchange=="BSE":
+        import bse
+        result=sector_snapshot(symbols,fetcher=bse.fetch_bse_chart)
+        result["market"]="BSE"
+    else:
+        result=sector_snapshot(symbols)
+    data=json.dumps(result,indent=2)
     if a.output:
         os.makedirs(os.path.dirname(os.path.abspath(a.output)),exist_ok=True)
         with open(a.output,"w",encoding="utf-8") as f:f.write(data+"\n")
