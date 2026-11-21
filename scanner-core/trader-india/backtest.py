@@ -4,7 +4,8 @@
 This is a transparent baseline, not a predictive model. It uses no future bar
 for an entry: a signal on close[t] is entered at open[t+1].
 """
-import argparse,csv,json,math,os
+import argparse,csv,json,math,os,sys
+sys.path.insert(0,os.path.dirname(__file__))
 from india import atr_wilder
 
 def run_backtest(bars,initial_capital=100000,risk_pct=0.5,fee_bps=5,slippage_bps=5,lookback=20):
