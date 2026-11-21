@@ -1,4 +1,4 @@
-name: Day Trader tests
+name: Scanner 5.0 tests
 
 on:
   push:
@@ -18,5 +18,5 @@ jobs:
         with:
           python-version: "3.12"
       - name: Run offline unit tests
-        working-directory: day-trader-skill
+        working-directory: scanner-core
         run: python -m unittest discover -s tests -v
