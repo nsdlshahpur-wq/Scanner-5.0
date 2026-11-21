@@ -39,7 +39,7 @@ class AdvancedModules(unittest.TestCase):
             path=os.path.join(folder,"portfolio.json")
             portfolio.open_position(path,"ABC",10,100,95)
             marked=portfolio.mark_portfolio(path,{"ABC":94})
-            self.assertEqual(marked["stop_alerts"],["ABC"])
+            self.assertEqual(marked["stop_alerts"],[{"exchange":"NSE","symbol":"ABC"}])
             self.assertEqual(marked["unrealized_pnl"],-60)
             closed=portfolio.close_position(path,"ABC",94,1)
             self.assertEqual(closed["net_pnl"],-61)
