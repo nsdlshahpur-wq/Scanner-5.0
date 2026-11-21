@@ -1,81 +1,75 @@
 ---
 name: trader-india
 description: >-
-  Scans Indian NSE cash equities using public price history for technical
-  setup candidates, computes conservative risk-based paper position sizing,
-  and stores local paper-trade records. Supports daily breakout, bull flag,
-  moving-average reclaim, RSI oversold and opening-range confirmation. Does
-  not transmit orders or connect to a broker. Use for NSE stocks, Indian
-  market scanning, technical analysis and paper-trading preparation.
+  Independent NSE cash-equity research scanner with daily and 5-minute
+  technical rules, sector snapshots, offline F&O futures OI classification,
+  conservative paper sizing, local paper portfolio, backtesting and offline
+  dashboard/alerts. Does not connect to brokers or transmit orders.
 argument-hint: "--symbols RELIANCE,TCS,INFY | --universe trader-india/universe.csv"
 ---
 
-# NSE India Scanner
+# NSE India Scanner 5.0
 
-## Purpose
+The India engine is isolated from the existing US scanner. Do not reuse US
+symbol universes, calendars or market assumptions.
 
-The NSE scanner is an independent market engine. It does not reuse the US
-Nasdaq symbol universe, US trading calendar or US market timezone. The existing
-US scanner remains unchanged.
+## Daily and intraday scans
 
-## Run
+Run from `scanner-core`:
 
-Run commands from the scanner-core directory:
+    python trader-india/india.py --universe trader-india/universe.csv --output trader/india-daily.json
+    python trader-india/intraday.py --universe trader-india/universe.csv --output trader/india-intraday.json
+    python trader-india/sectors.py --universe trader-india/universe.csv --output trader/sector-strength.json
 
-    python trader-india/india.py --universe trader-india/universe.csv --output trader/india-watchlist.json
-    python trader-india/india.py --symbols RELIANCE,TCS,INFY
-    python trader-india/paper.py --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-ledger.json
+Daily rules include 20-session breakout, bull flag, MA20 reclaim, RSI-14
+oversold and oversold bounce. Intraday requires completed 5-minute bars,
+a 15-minute opening range and a close above its high with relative volume
+confirmation. Sector snapshots are limited to the curated sector map.
+
+## Universe and derivatives data
+
+    python trader-india/universe.py --input /path/to/nse-equity-master.csv --output trader-india/universe.csv --series EQ
+    python trader-india/derivatives.py --csv /path/to/normalized-fo-bhavcopy.csv --output trader/fo-analysis.json
+
+The equity master and F&O files are user-supplied. Check source date, columns,
+series, expiry and symbol mappings. Derivatives input schema:
+
+    symbol,instrument,expiry,open_interest,change_in_oi,volume,close,underlying_close,previous_underlying_close
+
+Futures OI classification covers long buildup, short buildup, short covering
+and long unwinding when both price and OI changes exist. Full option-chain PCR,
+max pain and automated official-file downloads are not implemented.
+
+## Paper-only risk and portfolio
+
+    python trader-india/paper.py --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-sizing.json
+    python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --symbol RELIANCE --qty 5 --entry 1500 --stop 1480
+    python trader-india/portfolio.py --ledger trader/paper-portfolio.json mark --prices /path/to/prices.json
+    python trader-india/portfolio.py --ledger trader/paper-portfolio.json close --symbol RELIANCE --price 1520 --fee 5
+
+Sizing caps are 0.5% risk per trade and 20% notional by default. Portfolio
+marks and fills are user-supplied. Stop alerts are informational and do not
+place exit orders. The local ledger is not a broker statement or tax record.
+
+## Backtest, alerts and dashboard
+
+    python trader-india/backtest.py --csv /path/to/daily-ohlcv.csv --capital 100000 --output trader/backtest.json
+    python trader-india/alerts.py --input trader/india-intraday.json --output trader/india-alerts.json
+    python trader-india/dashboard.py --input Daily=trader/india-daily.json --input Intraday=trader/india-intraday.json --output trader/india-dashboard.html
+
+Backtest CSV must be chronological OHLCV. Entries are next-open after a prior
+completed-close signal. Daily-bar simulation cannot model all intraday paths,
+gaps, liquidity, taxes or survivorship bias.
+
+## Data quality and safety
+
+Daily/intraday prices use Yahoo Finance's unofficial chart endpoint and may
+be delayed, incomplete, adjusted or rate-limited. The default universe is a
+starter list, not the entire NSE market. No broker API, credential, order
+transmission or live execution is present. All outputs are research rules,
+not recommendations. Do not use for live trading without independent data,
+risk, legal and execution validation.
+
+Run offline tests:
+
     python -m unittest discover -s tests -v
-
-## Daily setups
-
-- breakout_20d: last completed close above the previous 20 completed closes.
-- bull_flag: prior advance greater than 10 percent, followed by a tight five-bar range.
-- reclaim_ma20: previous close below its 20-session average and latest close above it.
-- oversold: Wilder RSI-14 below 30.
-- oversold_bounce: RSI-14 was below 30 on the prior completed close and price has advanced.
-
-The current session's unfinished daily candle is excluded before 15:45 IST.
-The daily scanner reports candidates only. It does not create an entry order.
-A conservative watch flag rejects candidates extended more than 5 percent
-above the 20-session average.
-
-## Intraday opening range
-
-The opening-range helper requires three completed five-minute bars for the
-first 15 minutes of the regular NSE session (09:15 to 09:30 IST). A signal is
-reported only when a later completed five-minute bar closes above the opening
-range high. The range low is returned as a structural reference, not a
-guaranteed stop price.
-
-## Conservative paper sizing
-
-- Maximum risk budget is 0.5 percent of stated capital per trade.
-- Maximum position notional is 20 percent of stated capital.
-- Quantity is rounded down to whole shares.
-- Stop must be below entry for a long position.
-- Paper ledger records are local JSON records only.
-
-The sizing function does not account automatically for taxes, brokerage,
-slippage, gaps, circuit limits, liquidity or corporate actions. A gap can cause
-losses larger than the planned stop risk. Do not widen a stop after entry.
-
-## Data and universe
-
-The default CSV is a curated starter list of liquid NSE names, not the full
-NSE listing. Supply a maintained CSV with a symbol column to scan a wider
-universe. Yahoo Finance chart endpoints are unofficial, may be delayed,
-rate-limited or incomplete, and must be independently verified.
-
-## Planned later phases
-
-Official NSE bhavcopy ingestion, F&O open-interest buildup, full-universe
-refresh, sector breadth, live alerting, multi-timeframe filters and systematic
-backtesting are not yet implemented. Do not describe them as active features.
-
-## Safety
-
-This is research software, not financial advice. No broker integration is
-called by this module. Paper mode only during development. Never paste broker
-credentials into source files or chat. Verify data quality and all risk
-assumptions before relying on a setup.
