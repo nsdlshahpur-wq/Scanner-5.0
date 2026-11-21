@@ -12,6 +12,7 @@ def load(path,name):
 
 bse=load("trader-india/bse.py","bse_module")
 bse_intraday=load("trader-india/bse_intraday.py","bse_intraday_module")
+bse_universe=load("trader-india/bse_universe.py","bse_universe_module")
 portfolio=load("trader-india/portfolio.py","exchange_portfolio")
 IST=bse.IST
 
@@ -43,6 +44,17 @@ class BSESupport(unittest.TestCase):
         result=bse_intraday.analyze_bse_intraday("500325",rows,dt.datetime(2026,11,23,9,40,tzinfo=IST))
         self.assertEqual(result["exchange"],"BSE")
         self.assertTrue(result["paper_watch"])
+
+
+    def test_bse_scrip_master_import(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source=os.path.join(folder,"master.csv");dest=os.path.join(folder,"universe.csv")
+            with open(source,"w",newline="",encoding="utf-8") as handle:
+                handle.write("SCRIP_CD,Scrip_Name\\n500325,Reliance\\nBAD,Invalid\\n500325,Duplicate\\n")
+            result=bse_universe.import_bse_master(source,dest)
+            self.assertEqual(result["accepted"],1)
+            self.assertEqual(result["rejected"],1)
+            with open(dest,encoding="utf-8") as handle:self.assertIn("500325",handle.read())
 
     def test_portfolio_keeps_same_symbol_separate_by_exchange(self):
         with tempfile.TemporaryDirectory() as folder:
