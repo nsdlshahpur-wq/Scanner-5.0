@@ -7,6 +7,16 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 | Module | Purpose |
 | --- | --- |
 | `trader-scanner` | Existing US-listed stock scanner |
+| `trader-news` | Existing US market news and filing research |
+| `trader-entry` | Existing US setup and entry timing |
+| `trader-exit` | Existing US stop-loss and exit planning |
+| `trader-timemachine` | Existing historical scenario simulation |
+| `trader-risk` | Existing US risk controls |
+| `trader-budget` | Existing US position sizing |
+| `trader-broker` | Existing US broker ticket preparation |
+| `trader-alerts` | Existing US alert monitoring |
+| `trader-analyst` | Existing company and earnings analysis |
+| `trader-pelosi` | Existing public congressional-trade disclosures |
 | `trader-india/india.py` | NSE daily setups: 20-day breakout, bull flag, MA20 reclaim, RSI-14 and oversold bounce |
 | `trader-india/intraday.py` | NSE completed 5-minute candles, 15-minute ORB and volume confirmation |
 | `trader-india/bse.py` | Independent BSE daily scanner using `.BO` tickers |
