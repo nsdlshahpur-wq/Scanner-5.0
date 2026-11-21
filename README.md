@@ -6,7 +6,7 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 
 - `scanner-core/` - Python tools, skills, plugin metadata, documentation and offline tests.
 - `.github/workflows/scanner-tests.yml` - automated Python test workflow.
-- `scanner-core/trader-india/` - independent NSE research and paper-trading engine.
+- `scanner-core/trader-india/` - independent NSE/BSE research and exchange-aware paper-trading engine.
 
 ## Modules
 
@@ -43,7 +43,7 @@ NSE `.NS` and BSE `.BO` price feeds currently use an unofficial Yahoo Finance ch
 - Do not use the NSE or BSE modules for live trading.
 - Verify exchange data, corporate actions, fees, slippage, gaps and liquidity.
 - The default NSE and BSE universes and sector map are curated samples, not complete market coverage.
-- F&O analysis is currently normalized-CSV based and does not yet provide full option-chain PCR, max pain or automated exchange downloads.
+- F&O analysis is currently normalized-CSV based for NSE; BSE derivatives and full option-chain PCR/max-pain are not implemented.
 - Existing US Scanner modules are preserved and are not used as NSE data sources.
 
 ## License and attribution
