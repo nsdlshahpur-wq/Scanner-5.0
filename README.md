@@ -43,7 +43,7 @@ NSE `.NS` and BSE `.BO` price feeds currently use an unofficial Yahoo Finance ch
 - Do not use the NSE or BSE modules for live trading.
 - Verify exchange data, corporate actions, fees, slippage, gaps and liquidity.
 - The default NSE and BSE universes and sector map are curated samples, not complete market coverage.
-- F&O analysis is currently normalized-CSV based for NSE; BSE derivatives and full option-chain PCR/max-pain are not implemented.
+- F&O analysis is currently normalized-CSV based for NSE; BSE derivatives and full option-chain PCR/max-pain are not implemented. BSE cash universe import uses a user-downloaded BSE scrip master and requires code validation.
 - Existing US Scanner modules are preserved and are not used as NSE data sources.
 
 ## License and attribution
