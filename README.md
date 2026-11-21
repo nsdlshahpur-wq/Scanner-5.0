@@ -1,21 +1,23 @@
 # Scanner 5.0
 
-A modular market-analysis toolkit for US and Indian stock research. Existing US Scanner modules are preserved; the NSE scanner is an independent engine with separate data handling and conservative paper-trading controls.
+A modular market research toolkit for US and Indian equities. The existing US Scanner is preserved. NSE features live in an independent `scanner-core/trader-india/` engine and remain paper-only.
 
-## Project structure
+## NSE capabilities
 
-- scanner-core/ - Python tools, modules, documentation and offline tests.
-- scanner-core/trader-india/ - NSE scanner and paper-only sizing.
-- .github/workflows/scanner-tests.yml - automated Python test workflow.
+- Daily technical setups and completed-candle handling.
+- 5-minute intraday scanner with 15-minute opening-range breakout and volume confirmation.
+- Curated sector relative-strength snapshot and user-supplied NSE universe import.
+- F&O futures open-interest buildup classification from a normalized bhavcopy CSV.
+- Conservative position sizing, local paper portfolio, mark-to-market and stop alerts.
+- Daily OHLCV baseline backtesting.
+- Local JSON alerts and an offline HTML dashboard.
 
-## Current capabilities
+## Start here
 
-- Existing US market scanning, news, entry/exit, risk, budget, alerts and historical simulation.
-- NSE daily technical scanner: 20-session closing breakout, bull flag, MA20 reclaim, RSI-14 oversold and oversold bounce.
-- Conservative paper position sizing and a local paper ledger.
-
-The NSE universe supplied in the repository is a curated starter watchlist, not the complete NSE listing. Yahoo Finance data is unofficial and may be delayed or incomplete. NSE F&O and broader market modules are planned, not yet implemented.
+See [scanner-core/README.md](scanner-core/README.md) for installation, commands, input CSV formats, test instructions and data limitations.
 
 ## Important
 
-Research and decision-support software only. No live broker orders are sent by the NSE module. Paper mode is the default development mode. Never treat a signal as a buy recommendation.
+NSE market data currently uses an unofficial Yahoo Finance chart feed for prices. F&O and full-universe imports require user-supplied exchange files. Unit tests do not validate live data or profitability. This is research software, not financial advice. No broker orders are sent; do not use it for live trading.
+
+The original US Scanner modules and attribution remain preserved.
