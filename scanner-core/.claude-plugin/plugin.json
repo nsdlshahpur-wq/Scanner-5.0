@@ -1,6 +1,6 @@
 {
   "name": "scanner-core",
-  "description": "Scanner 5.0 market analysis toolkit: scan stocks, monitor news, plan entries and exits, simulate scenarios, size positions, and apply risk controls.",
+  "description": "Scanner 5.0 market analysis toolkit: scan stocks, monitor news, plan entries and exits, simulate scenarios, and apply risk controls.",
   "version": "5.0.0",
   "author": {
     "name": "Jake Schincariol",

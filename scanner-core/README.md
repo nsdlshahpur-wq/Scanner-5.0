@@ -1,4 +1,4 @@
-# Scanner 5.0 — Market Analysis Toolkit
+# Scanner 5.0 - Market Analysis Toolkit
 
 A collection of modular skills and Python utilities for stock-market research, technical scanning, news monitoring, trade planning, position sizing, risk checks, and historical scenario analysis.
 
@@ -34,7 +34,7 @@ From this directory:
 python -m unittest discover -s tests -v
 ```
 
-The test suite uses local fixtures and is designed to run offline. Three binary upstream fixtures were not available when this repository copy was assembled, so tests that depend on those specific files may not pass until the fixtures are restored.
+The test suite uses the published local fixtures and is designed to run offline.
 
 ## Safety and limitations
 

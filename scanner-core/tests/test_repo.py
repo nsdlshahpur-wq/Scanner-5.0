@@ -9,8 +9,7 @@ from _load import ROOT
 SKILLS = ["trader-scanner", "trader-news", "trader-entry", "trader-exit", "trader-timemachine",
           "trader-risk", "trader-budget", "trader-broker", "trader-alerts", "trader-analyst",
           "trader-pelosi"]
-ABOUT = ("11 Claude skills for day trading: scan thousands of charts, track breaking news, time every "
-         "entry and exit, and replay every outcome before you risk a dollar.")
+ABOUT = ("Scanner 5.0 market analysis toolkit: scan stocks, monitor news, plan entries and exits, simulate scenarios, and apply risk controls.")
 # skills on the way to an order carry the safety block
 ORDER_PATH = ["trader-scanner", "trader-entry", "trader-exit", "trader-timemachine", "trader-budget",
               "trader-pelosi", "trader-risk", "trader-broker", "trader-alerts"]
@@ -60,26 +59,23 @@ class Repo(unittest.TestCase):
     def test_plugin_manifest_points_at_the_root_skills(self):
         with open(os.path.join(ROOT, ".claude-plugin", "plugin.json")) as fh:
             plugin = json.load(fh)
-        self.assertEqual(plugin["name"], "day-trader-skill")
+        self.assertEqual(plugin["name"], "scanner-core")
         self.assertEqual(plugin["skills"], "./")
         self.assertEqual(plugin["description"], ABOUT)
         with open(os.path.join(ROOT, ".claude-plugin", "marketplace.json")) as fh:
             market = json.load(fh)
-        self.assertEqual(market["name"], "day-trader-skill")
-        self.assertEqual(market["plugins"][0]["name"], "day-trader-skill")
+        self.assertEqual(market["name"], "scanner-core")
+        self.assertEqual(market["plugins"][0]["name"], "scanner-core")
 
     def test_readme_carries_the_reel_copy(self):
         with open(os.path.join(ROOT, "README.md"), encoding="utf-8") as fh:
             readme = " ".join(fh.read().split())
-        self.assertTrue(readme.startswith("# The Day Trader skill"))
-        for line in (ABOUT,
-                     "https://github.com/Jakeschincariol/day-trader-skill install skill",
-                     "/plugin marketplace add Jakeschincariol/day-trader-skill",
-                     "/plugin install day-trader-skill@day-trader-skill",
-                     "## Fine print"):
-            self.assertIn(line, readme)
+        self.assertTrue(readme.startswith("# Scanner 5.0"))
+        self.assertIn("## Modules", readme)
+        self.assertIn("## Safety and limitations", readme)
+        self.assertIn("## License and attribution", readme)
         for s in SKILLS:
-            self.assertIn("/" + s, readme, s)
+            self.assertIn("`" + s + "`", readme, s)
 
     def test_no_em_dashes_and_no_personal_email(self):
         for path in every_text_file():
