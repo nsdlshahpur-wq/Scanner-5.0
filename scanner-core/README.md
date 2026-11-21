@@ -1,6 +1,6 @@
 # Scanner 5.0 - Market Analysis Toolkit
 
-A modular research and decision-support toolkit for US and Indian equities. Existing US modules remain separate and preserved. The NSE engine has its own universe, timezone, data adapters, indicators and paper-only portfolio.
+A modular research and decision-support toolkit for US and Indian equities. Existing US modules remain separate and preserved. NSE and BSE use separate exchange adapters and starter universes, with an exchange-aware paper-only portfolio.
 
 ## Modules
 
@@ -29,8 +29,11 @@ Run commands from `scanner-core`:
 python trader-india/india.py --universe trader-india/universe.csv --output trader/india-daily.json
 python trader-india/bse.py --universe trader-india/bse-universe.csv --output trader/bse-daily.json
 python trader-india/bse_intraday.py --universe trader-india/bse-universe.csv --output trader/bse-intraday.json
+python trader-india/bse.py --universe trader-india/bse-universe.csv --output trader/bse-daily.json
+python trader-india/bse_intraday.py --universe trader-india/bse-universe.csv --output trader/bse-intraday.json
 python trader-india/intraday.py --universe trader-india/universe.csv --output trader/india-intraday.json
 python trader-india/sectors.py --universe trader-india/universe.csv --output trader/sector-strength.json
+python trader-india/sectors.py --exchange BSE --universe trader-india/bse-universe.csv --output trader/bse-sector-strength.json
 python trader-india/sectors.py --exchange BSE --universe trader-india/bse-universe.csv --output trader/bse-sector-strength.json
 python trader-india/alerts.py --input trader/india-intraday.json --output trader/india-alerts.json
 python trader-india/dashboard.py --input Daily=trader/india-daily.json --input Intraday=trader/india-intraday.json --output trader/india-dashboard.html
@@ -61,7 +64,8 @@ It classifies futures long buildup, short buildup, short covering and long unwin
 ### Paper portfolio
 
 ```bash
-python trader-india/paper.py --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-sizing.json
+python trader-india/paper.py --exchange NSE --symbol RELIANCE --capital 100000 --entry 1500 --stop 1485 --record trader/paper-sizing.json
+python trader-india/paper.py --exchange BSE --symbol 500325 --capital 100000 --entry 1500 --stop 1485 --record trader/bse-paper-sizing.json
 python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange NSE --symbol RELIANCE --qty 5 --entry 1500 --stop 1480
 python trader-india/portfolio.py --ledger trader/paper-portfolio.json open --exchange BSE --symbol 500325 --qty 5 --entry 1500 --stop 1480
 python trader-india/portfolio.py --ledger trader/paper-portfolio.json mark --prices /path/to/prices.json  # keys: NSE:RELIANCE, BSE:500325
