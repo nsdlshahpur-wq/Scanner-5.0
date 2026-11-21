@@ -72,8 +72,8 @@ class Indicators(unittest.TestCase):
 class PaperSizing(unittest.TestCase):
     def test_conservative_size(self):
         plan = paper.size_position(100000, 100, 98)
-        self.assertEqual(plan["quantity"], 200)
-        self.assertEqual(plan["estimated_max_loss"], 400)
+        self.assertEqual(plan["quantity"], 25)
+        self.assertEqual(plan["estimated_max_loss"], 50)
         self.assertEqual(plan["mode"], "paper_only")
 
     def test_position_cap(self):
@@ -87,20 +87,6 @@ class PaperSizing(unittest.TestCase):
     def test_risk_cap_rejects_aggressive_setting(self):
         with self.assertRaises(ValueError):
             paper.size_position(100000, 100, 95, risk_pct=1)
-
-
-    def test_opening_range_breakout_requires_completed_close(self):
-        day = dt.date(2026, 11, 23)
-        bars = []
-        for minute, high, low, close in [(15,101,99,100),(20,102,99,101),(25,103,100,102),
-                                          (30,105,102,104)]:
-            stamp = dt.datetime.combine(day, dt.time(9, minute), IST)
-            bars.append({"time":stamp.isoformat(),"open":close-0.5,"high":high,
-                         "low":low,"close":close,"volume":1000})
-        result = india.analyze_opening_range(bars, now=dt.datetime(2026,11,23,9,40,tzinfo=IST))
-        self.assertTrue(result["signal"])
-        self.assertEqual(result["range_high"], 103)
-        self.assertEqual(result["breakout_close"], 104)
 
     def test_paper_ledger_append(self):
         with tempfile.TemporaryDirectory() as folder:

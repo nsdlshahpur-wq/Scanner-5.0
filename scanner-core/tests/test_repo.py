@@ -8,7 +8,7 @@ from _load import ROOT
 # v2, the day-trading pack: the eleven folders the reel's repo card shows
 SKILLS = ["trader-scanner", "trader-news", "trader-entry", "trader-exit", "trader-timemachine",
           "trader-risk", "trader-budget", "trader-broker", "trader-alerts", "trader-analyst",
-          "trader-pelosi"]
+          "trader-pelosi", "trader-india"]
 ABOUT = ("Scanner 5.0 market analysis toolkit: scan stocks, monitor news, plan entries and exits, simulate scenarios, and apply risk controls.")
 # skills on the way to an order carry the safety block
 ORDER_PATH = ["trader-scanner", "trader-entry", "trader-exit", "trader-timemachine", "trader-budget",
