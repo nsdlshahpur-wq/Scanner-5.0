@@ -6,18 +6,18 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 
 | Module | Purpose |
 | --- | --- |
-| trader-scanner | Existing US-listed stock scanner (NYSE / NASDAQ) |
-| trader-india | NSE daily technical scanner and conservative paper sizing |
-| trader-news | Monitors US market headlines and company filings |
-| trader-entry | Tracks setup conditions and entry timing |
-| trader-exit | Prepares stop-loss and target plans |
-| trader-timemachine | Simulates historical and potential scenarios |
-| trader-risk | Checks orders against risk limits |
-| trader-budget | Calculates position size from account limits |
-| trader-broker | Prepares broker tickets; paper mode by default |
-| trader-alerts | Monitors configured price and time alerts |
-| trader-analyst | Summarizes earnings and company fundamentals |
-| trader-pelosi | Reads publicly disclosed congressional trades |
+| `trader-scanner` | Existing US-listed stock scanner (NYSE / NASDAQ) |
+| `trader-india` | NSE daily technical scanner and conservative paper sizing |
+| `trader-news` | Monitors US market headlines and company filings |
+| `trader-entry` | Tracks setup conditions and entry timing |
+| `trader-exit` | Prepares stop-loss and target plans |
+| `trader-timemachine` | Simulates historical and potential scenarios |
+| `trader-risk` | Checks orders against risk limits |
+| `trader-budget` | Calculates position size from account limits |
+| `trader-broker` | Prepares broker tickets; paper mode by default |
+| `trader-alerts` | Monitors configured price and time alerts |
+| `trader-analyst` | Summarizes earnings and company fundamentals |
+| `trader-pelosi` | Reads publicly disclosed congressional trades |
 
 ## NSE quick start
 

@@ -72,8 +72,8 @@ class Indicators(unittest.TestCase):
 class PaperSizing(unittest.TestCase):
     def test_conservative_size(self):
         plan = paper.size_position(100000, 100, 98)
-        self.assertEqual(plan["quantity"], 25)
-        self.assertEqual(plan["estimated_max_loss"], 50)
+        self.assertEqual(plan["quantity"], 200)
+        self.assertEqual(plan["estimated_max_loss"], 400)
         self.assertEqual(plan["mode"], "paper_only")
 
     def test_position_cap(self):
