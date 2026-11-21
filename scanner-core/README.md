@@ -96,7 +96,7 @@ python trader-india/backtest.py --csv /path/to/daily-ohlcv.csv --capital 100000 
 
 The baseline strategy signals on a completed close and enters at the next bar's open. Daily-bar backtests cannot fully model intraday path, gaps, liquidity, taxes or survivorship bias.
 
-## Risk controls and data limitations
+## Safety and limitations
 
 - No broker credentials, broker API calls, order transmission or live execution are included.
 - Signals are rule matches, not buy/sell recommendations.
