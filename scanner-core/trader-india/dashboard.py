@@ -163,7 +163,7 @@ footer{color:#8995a7;font-size:11px;margin-top:18px}
 <div id="sections">"""
     document += "".join(sections)
     document += """</div>
-<p class="notice"><strong>Data and execution notice:</strong> This dashboard displays the JSON files supplied to it; it does not fetch or verify live exchange data. Market data may be delayed, incomplete or unavailable depending on the upstream provider. Signals are research outputs, not guaranteed trade recommendations. Paper mode only — no orders are placed or transmitted.</p>
+<p class="notice"><strong>Data and execution notice:</strong> This dashboard displays the JSON files supplied to it; it does not fetch or verify live exchange data. Market data may be delayed, incomplete or unavailable depending on the upstream provider. Signals are research outputs, not guaranteed trade recommendations. Paper mode only - no orders are placed or transmitted.</p>
 <footer>Scanner 5.0 · Offline HTML report · Generated """ + generated + """</footer>
 </main>
 <script>
