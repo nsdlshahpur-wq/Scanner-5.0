@@ -6,6 +6,7 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 
 - `scanner-core/` - Python tools, skills, plugin metadata, documentation and offline tests.
 - `.github/workflows/scanner-tests.yml` - automated Python test workflow.
+- `scanner-core/day-trading/` - end-to-end Day Trading workflow orchestrating the US, NSE/BSE, risk, sizing, alerts and DhanHQ modules.
 - `scanner-core/trader-india/` - independent NSE/BSE research and exchange-aware paper-trading engine.
 - `render.yaml` and `scanner-core/trader-india/web-dashboard/streamlit_app.py` - shared web dashboard deployment for Render and Streamlit Community Cloud. See [deployment guide](DEPLOYMENT.md).
 
@@ -23,6 +24,10 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 - `trader-analyst` - company and earnings analysis
 - `trader-pelosi` - public congressional-trade disclosures
 - `trader-india` - independent NSE/BSE scanners, paper portfolio and optional DhanHQ broker panel
+
+## Day Trading workflow
+
+The `day-trading` skill coordinates the existing scanner, news, entry, exit, replay, sizing, risk and alert skills. It includes separate US and NSE/BSE workflows, a mandatory risk checklist and a DhanHQ manual-order handoff. See [Day Trading Skill](scanner-core/day-trading/SKILL.md) and [Day Trading Playbook](scanner-core/day-trading/PLAYBOOK.md).
 
 ## NSE and BSE capabilities
 
