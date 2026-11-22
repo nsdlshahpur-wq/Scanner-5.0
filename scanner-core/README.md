@@ -4,10 +4,9 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 
 ## Modules
 
-| `day-trading` | End-to-end workflow coordinating scanners, news, entries, exits, replay, sizing, risk, alerts and DhanHQ handoff |
-
 | Module | Purpose |
 | --- | --- |
+| `day-trading` | End-to-end workflow coordinating scanners, news, entries, exits, replay, sizing, risk, alerts and DhanHQ handoff |
 | `trader-scanner` | Existing US-listed stock scanner |
 | `trader-news` | Existing US market news and filing research |
 | `trader-entry` | Existing US setup and entry timing |
