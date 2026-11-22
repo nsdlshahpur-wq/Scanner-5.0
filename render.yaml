@@ -2,7 +2,7 @@ services:
   - type: web
     name: scanner-5-market-dashboard
     runtime: python
-    rootDir: scanner-core/web-dashboard
+    rootDir: scanner-core/trader-india/web-dashboard
     buildCommand: pip install -r requirements.txt
     startCommand: streamlit run streamlit_app.py --server.address 0.0.0.0 --server.port $PORT --server.headless true
     healthCheckPath: /_stcore/health
