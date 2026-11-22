@@ -65,6 +65,10 @@ with scanner_tab:
             needle = search_text.strip().lower()
             visible = [s for s in visible if needle in s["name"].lower() or needle in json.dumps(s["rows"], ensure_ascii=False, default=str).lower()]
         total_records = sum(len(s["rows"]) for s in visible)
+        st.session_state["dhan_scanner_signals"] = [
+            {"market": section["market"], **row}
+            for section in sections for row in section["rows"]
+        ]
         a, b, c = st.columns(3)
         a.metric("Data sections", len(visible))
         b.metric("Total records", total_records)
@@ -141,15 +145,28 @@ with broker_tab:
             if f"dhan_{label}" in st.session_state:
                 with col: st.json(st.session_state[f"dhan_{label}"])
         st.divider()
-        st.markdown("#### Manual Order Ticket")
+        st.markdown("#### Scanner Signal → Manual Order Ticket")
+        signal_rows = st.session_state.get("dhan_scanner_signals", [])
+        signal_labels = ["Manual entry"] + [
+            f'{row.get("market", "N/A")} · {row.get("symbol", row.get("tradingSymbol", row.get("ticker", "Unknown")))} · {row.get("signal", row.get("action", row.get("setup", "Signal")))}'
+            for row in signal_rows
+        ]
+        selected_label = st.selectbox("Import a scanner signal (optional)", signal_labels)
+        selected_signal = None
+        if selected_label != "Manual entry":
+            selected_signal = signal_rows[signal_labels.index(selected_label) - 1]
+            st.info("Signal केवल Order Ticket में सुझाव भरेगा। यह अपने-आप ऑर्डर नहीं भेजेगा।")
+        suggested_side_raw = str((selected_signal or {}).get("transactionType", (selected_signal or {}).get("side", (selected_signal or {}).get("action", "")))).upper()
+        suggested_side = "SELL" if "SELL" in suggested_side_raw else "BUY"
+        suggested_security = str((selected_signal or {}).get("securityId", (selected_signal or {}).get("security_id", "")))
         if not live_orders_enabled():
             st.error("Live order transmission अभी बंद है। Render सर्वर पर DHAN_ENABLE_LIVE_ORDERS=true और DHAN_STATIC_IP=<Dhan में whitelisted वही स्थिर outbound IP> सेट होने तक order button सक्रिय नहीं होगा। Streamlit Community Cloud को static outbound IP मानकर उपयोग न करें।")
         with st.form("dhan_order_form"):
             o1, o2, o3 = st.columns(3)
             with o1:
-                side = st.selectbox("Transaction", ["BUY", "SELL"])
+                side = st.selectbox("Transaction", ["BUY", "SELL"], index=1 if suggested_side == "SELL" else 0)
                 order_segment = st.selectbox("Order Segment", ["NSE_EQ", "BSE_EQ", "NSE_FNO", "BSE_FNO", "MCX_COMM"])
-                security_id = st.text_input("Security ID", placeholder="Exchange instrument ID")
+                security_id = st.text_input("Security ID", value=suggested_security, placeholder="Exchange instrument ID")
             with o2:
                 product = st.selectbox("Product", ["CNC", "INTRADAY", "MARGIN", "MTF"])
                 order_type = st.selectbox("Order Type", ["LIMIT", "MARKET", "STOP_LOSS", "STOP_LOSS_MARKET"])
