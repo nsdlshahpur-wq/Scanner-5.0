@@ -175,7 +175,7 @@ function refresh(){
  const term=search.value.trim().toLowerCase();
  panels.forEach(panel=>{
   const label=panel.dataset.label||'';
-  const market=label.includes('nse')?'nse':label.includes('bse')?'bse':(/\bus\b|\bnyse\b|\bnasdaq\b/.test(label)?'us':'other');
+  const market=label.includes('nse')?'nse':label.includes('bse')?'bse':(label.includes('us')||label.includes('nyse')||label.includes('nasdaq')?'us':'other');
   const marketMatch=filter==='all'||filter===market;
   const textMatch=!term||panel.textContent.toLowerCase().includes(term);
   panel.classList.toggle('hidden',!(marketMatch&&textMatch));
