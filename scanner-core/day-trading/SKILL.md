@@ -231,3 +231,15 @@ multiple indicators agree.
 - `trader-alerts`: local price/time alerts.
 - `trader-india`: NSE/BSE scanner and paper portfolio.
 - `trader-broker` Dhan integration is accessed through the Streamlit dashboard, not this US broker skill.
+
+
+## Safety and approval
+
+This skill is education and tooling, not financial advice. A scanner hit,
+historical replay or risk PASS is not a recommendation and is not the user's
+yes. Before any live order, the user must review the exact ticket and give an
+explicit yes for that order. The broker's own approval controls must remain
+enabled. Never set an order tool to always allow. If the order, quantity,
+price, stop or account mode changes, repeat the risk review and obtain a new
+yes. Paper trading remains the default unless the user deliberately chooses
+otherwise.
