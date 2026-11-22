@@ -1,6 +1,6 @@
 {
   "name": "scanner-core",
-  "description": "Scanner 5.0 market analysis toolkit: scan stocks, monitor news, plan entries and exits, simulate scenarios, and apply risk controls.",
+  "description": "Scanner 5.0 market analysis and Day Trading workflow: scan US, NSE and BSE markets, review catalysts, confirm entries, plan exits, simulate setups, size positions, enforce risk limits, monitor alerts and prepare user-confirmed broker tickets.",
   "version": "5.0.0",
   "author": {
     "name": "Jake Schincariol",
@@ -17,7 +17,12 @@
     "technical-analysis",
     "backtesting",
     "risk-management",
-    "paper-trading"
+    "paper-trading",
+    "day-trading",
+    "intraday-scanning",
+    "DhanHQ",
+    "NSE",
+    "BSE"
   ],
   "skills": "./"
 }
