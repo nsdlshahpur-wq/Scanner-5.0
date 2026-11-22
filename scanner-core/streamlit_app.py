@@ -8,7 +8,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Scanner 5.0 | Market Dashboard", page_icon="📈", layout="wide")
 st.markdown("""<style>.block-container{padding-top:1.5rem;padding-bottom:2.5rem}[data-testid="stMetric"]{background:#f4f7fb;padding:14px 16px;border-radius:12px;border:1px solid #e4eaf3}</style>""", unsafe_allow_html=True)
-st.title("📈 Scanner 5.0 — Market Dashboard")
+st.title("📈 Scanner 5.0 - Market Dashboard")
 st.caption("US · NSE · BSE | Daily scans, intraday signals and research outputs")
 
 def records_from_json(raw: Any) -> list[dict[str, Any]]:
@@ -81,4 +81,4 @@ for section in visible:
         else: st.info("Valid JSON file, but no tabular records were found.")
 
 st.divider()
-st.caption("Data notice: displays uploaded JSON files only and does not independently fetch or verify live exchange data. Upstream feeds may be delayed or incomplete. Signals are research outputs, not guaranteed trade recommendations. Paper mode only — no orders are placed or transmitted.")
+st.caption("Data notice: displays uploaded JSON files only and does not independently fetch or verify live exchange data. Upstream feeds may be delayed or incomplete. Signals are research outputs, not guaranteed trade recommendations. Paper mode only - no orders are placed or transmitted.")
