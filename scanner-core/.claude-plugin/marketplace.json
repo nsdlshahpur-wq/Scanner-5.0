@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "scanner-core",
-  "description": "Scanner 5.0 market analysis toolkit for Claude: chart scanning, news monitoring, entry and exit planning, scenario simulation, risk controls, position sizing, alerts, and company research.",
+  "description": "Scanner 5.0 market analysis and Day Trading workflow for US, NSE and BSE: scanners, catalyst review, entry and exit planning, scenario replay, position sizing, risk checks, alerts and user-confirmed broker tickets.",
   "owner": {
     "name": "Jake Schincariol",
     "url": "https://opusjake.ai"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "scanner-core",
-      "description": "A modular market research toolkit with a technical scanner, news monitor, entry timer, exit planner, scenario simulator, risk manager, position sizing, broker ticket preparation, price alerts, earnings analysis, and public filing monitor.",
+      "description": "End-to-end Day Trading workflow plus market scanners, news, entry/exit planners, scenario simulation, risk manager, sizing, alerts, company research, NSE/BSE engines and DhanHQ manual broker panel.",
       "source": "./",
       "category": "productivity",
       "homepage": "https://github.com/nsdlshahpur-wq/Scanner-5.0/tree/main/scanner-core"

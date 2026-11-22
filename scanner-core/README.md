@@ -6,6 +6,7 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 
 | Module | Purpose |
 | --- | --- |
+| `day-trading` | End-to-end workflow coordinating scanners, news, entries, exits, replay, sizing, risk, alerts and DhanHQ handoff |
 | `trader-scanner` | Existing US-listed stock scanner |
 | `trader-news` | Existing US market news and filing research |
 | `trader-entry` | Existing US setup and entry timing |
@@ -31,6 +32,10 @@ A modular research and decision-support toolkit for US and Indian equities. Exis
 | `trader-india/backtest.py` | Daily breakout baseline backtest with next-open entry |
 | `trader-india/alerts.py` | Local JSON alerts; no push service or orders |
 | `trader-india/dashboard.py` | Offline HTML dashboard from scanner JSON outputs |
+
+## Day Trading workflow
+
+Start with [day-trading/SKILL.md](day-trading/SKILL.md) for the complete market-specific workflow and [day-trading/PLAYBOOK.md](day-trading/PLAYBOOK.md) for the operational checklist. The orchestrator reuses the modules below; it does not bypass their safety checks.
 
 ## Quick start
 
