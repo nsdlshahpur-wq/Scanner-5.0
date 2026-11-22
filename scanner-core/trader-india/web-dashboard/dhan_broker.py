@@ -62,10 +62,8 @@ class DhanClient:
                     product_type: str, order_type: str, validity: str,
                     security_id: str, quantity: int, price: float = 0.0,
                     trigger_price: float = 0.0) -> dict:
-        if os.getenv("DHAN_ENABLE_LIVE_ORDERS", "").lower() != "true":
-            raise DhanAPIError("Live Order अभी सर्वर पर बंद है। Static IP Whitelisting के बाद ही सक्षम करें।")
-        if not os.getenv("DHAN_STATIC_IP", "").strip():
-            raise DhanAPIError("DHAN_STATIC_IP सर्वर पर सेट नहीं है। Live Order रोका गया।")
+        if not live_orders_enabled():
+            raise DhanAPIError("Live Order रोका गया: सर्वर का वास्तविक outbound IP DHAN_STATIC_IP से मेल नहीं खाता या Static IP gate बंद है।")
         if transaction_type not in {"BUY", "SELL"}:
             raise DhanAPIError("अमान्य BUY/SELL विकल्प।")
         if exchange_segment not in {"NSE_EQ", "BSE_EQ", "NSE_FNO", "BSE_FNO", "MCX_COMM"}:
@@ -100,5 +98,12 @@ class DhanClient:
         return self._request("POST", "/orders", json_body=body)
 
 def live_orders_enabled() -> bool:
-    return (os.getenv("DHAN_ENABLE_LIVE_ORDERS", "").lower() == "true"
-            and bool(os.getenv("DHAN_STATIC_IP", "").strip()))
+    """Fail closed unless the host's actual public egress IP matches Dhan's allowlisted IP."""
+    configured_ip = os.getenv("DHAN_STATIC_IP", "").strip()
+    if os.getenv("DHAN_ENABLE_LIVE_ORDERS", "").lower() != "true" or not configured_ip:
+        return False
+    try:
+        actual_ip = requests.get("https://api64.ipify.org", timeout=4).text.strip()
+        return actual_ip == configured_ip
+    except requests.RequestException:
+        return False
