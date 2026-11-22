@@ -7,7 +7,7 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 - `scanner-core/` - Python tools, skills, plugin metadata, documentation and offline tests.
 - `.github/workflows/scanner-tests.yml` - automated Python test workflow.
 - `scanner-core/trader-india/` - independent NSE/BSE research and exchange-aware paper-trading engine.
-- `render.yaml` and `scanner-core/streamlit_app.py` - shared web dashboard deployment for Render and Streamlit Community Cloud. See [deployment guide](DEPLOYMENT.md).
+- `render.yaml` and `scanner-core/web-dashboard/streamlit_app.py` - shared web dashboard deployment for Render and Streamlit Community Cloud. See [deployment guide](DEPLOYMENT.md).
 
 ## Modules
 
