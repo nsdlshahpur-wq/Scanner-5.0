@@ -87,3 +87,14 @@ included. Research only; not financial advice.
 Run offline tests:
 
     python -m unittest discover -s tests -v
+
+
+## DhanHQ Broker Connect
+The web dashboard includes an optional DhanHQ v2 panel for profile verification,
+LTP quote snapshots, funds, holdings, positions, order book and manually
+confirmed BUY/SELL orders. See `web-dashboard/DHAN_INTEGRATION.md`.
+
+Live order transmission is disabled by default. Dhan requires a fixed,
+whitelisted static IP for order placement. Never enable live orders on a host
+without verifying that its outbound IP is fixed and registered with Dhan.
+Scanner signals may prefill the order ticket but never auto-submit orders.

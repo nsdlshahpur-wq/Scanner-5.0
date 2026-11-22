@@ -22,7 +22,7 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 - `trader-alerts` - alert monitoring
 - `trader-analyst` - company and earnings analysis
 - `trader-pelosi` - public congressional-trade disclosures
-- `trader-india` - independent NSE/BSE scanners and exchange-aware paper-only modules
+- `trader-india` - independent NSE/BSE scanners, paper portfolio and optional DhanHQ broker panel
 
 ## NSE and BSE capabilities
 
@@ -36,12 +36,12 @@ A modular market research toolkit for US and Indian equities. The existing US Sc
 
 ## Important
 
-NSE `.NS` and BSE `.BO` price feeds currently use an unofficial Yahoo Finance chart endpoint and may be delayed or incomplete. F&O and full-universe imports require user-supplied exchange files. Unit tests do not validate live data or profitability. This is research software, not financial advice or a guarantee of results. No NSE or BSE broker orders are sent; paper mode only.
+NSE `.NS` and BSE `.BO` price feeds currently use an unofficial Yahoo Finance chart endpoint and may be delayed or incomplete. F&O and full-universe imports require user-supplied exchange files. Unit tests do not validate live data or profitability. This is research software, not financial advice or a guarantee of results. DhanHQ integration supports live quote snapshots and user-confirmed orders, but live order transmission remains disabled until a verified fixed outbound IP is whitelisted with Dhan.
 
 ## Safety and limitations
 
 - Do not treat scanner signals as buy or sell recommendations.
-- Do not use the NSE or BSE modules for live trading.
+- Scanner signals only prefill an order ticket; they never auto-submit live orders. Manual order placement is gated by Dhan static-IP whitelisting and explicit user confirmation.
 - Verify exchange data, corporate actions, fees, slippage, gaps and liquidity.
 - The default NSE and BSE universes and sector map are curated samples, not complete market coverage.
 - F&O analysis is currently normalized-CSV based for NSE; BSE derivatives and full option-chain PCR/max-pain are not implemented. BSE cash universe import uses a user-downloaded BSE scrip master and requires code validation.
@@ -52,3 +52,6 @@ NSE `.NS` and BSE `.BO` price feeds currently use an unofficial Yahoo Finance ch
 The original imported source license and attribution are retained in `scanner-core/LICENSE`.
 
 See [scanner-core/README.md](scanner-core/README.md) for commands, CSV formats, tests and implementation limitations.
+
+
+Dhan integration setup: [DHAN_INTEGRATION.md](scanner-core/trader-india/web-dashboard/DHAN_INTEGRATION.md).
