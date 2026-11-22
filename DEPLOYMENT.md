@@ -6,8 +6,8 @@ The repository includes a shared Streamlit dashboard entry point for both hostin
 1. Open https://share.streamlit.io/ and sign in with GitHub.
 2. Select repository nsdlshahpur-wq/Scanner-5.0.
 3. Select branch main after the dashboard PR is merged.
-4. Set Main file path to scanner-core/streamlit_app.py.
-5. Deploy. Dependencies are read from scanner-core/requirements.txt.
+4. Set Main file path to scanner-core/web-dashboard/streamlit_app.py.
+5. Deploy. Dependencies are read from scanner-core/web-dashboard/requirements.txt.
 
 ## Render
 1. Open https://dashboard.render.com/ and choose New → Blueprint.
