@@ -243,3 +243,12 @@ enabled. Never set an order tool to always allow. If the order, quantity,
 price, stop or account mode changes, repeat the risk review and obtain a new
 yes. Paper trading remains the default unless the user deliberately chooses
 otherwise.
+
+
+## SMC research layer (NSE)
+
+For Smart Money Concepts context, run:
+
+    python trader-india/smc.py --universe trader-india/universe.csv --interval 5m --range 5d --output trader/smc-watchlist.json
+
+Use 60m or 1d for higher-timeframe context and 15m/5m for lower-timeframe review. Treat BOS/CHOCH, liquidity sweeps, FVGs and order blocks as OHLCV-derived observations only. A watchlist result is not an entry signal. Require a separately confirmed completed-candle trigger, invalidation, stop, target, sizing and India-specific risk review. SMC is currently NSE-only; the Yahoo feed is unofficial and may be delayed or incomplete. See trader-india/SMC_SKILL.md.
