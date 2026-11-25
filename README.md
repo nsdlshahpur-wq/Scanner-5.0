@@ -60,3 +60,7 @@ See [scanner-core/README.md](scanner-core/README.md) for commands, CSV formats, 
 
 
 Dhan integration setup: [DHAN_INTEGRATION.md](scanner-core/trader-india/web-dashboard/DHAN_INTEGRATION.md).
+
+## Smart Money Concepts integration
+
+An independent NSE SMC research layer has been added under scanner-core/trader-india/smc.py, with documentation and offline unit tests. It uses the existing Yahoo Finance chart adapter and preserves the existing scanners. See scanner-core/trader-india/SMC_SKILL.md. It does not import private source code or backend signals from the linked web app, and it does not place orders.
