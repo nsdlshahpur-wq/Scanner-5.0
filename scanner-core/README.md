@@ -136,3 +136,17 @@ The NSE and BSE engines are isolated under `trader-india`; existing US scanner m
 ## License and attribution
 
 The original imported source license and attribution are retained in LICENSE.
+
+
+## Smart Money Concepts (SMC)
+
+An independent NSE SMC research scanner is available at trader-india/smc.py. It detects confirmed swing structure, BOS/CHOCH approximations, liquidity sweeps, three-candle FVGs, heuristic order-block candidates and premium/discount location from Yahoo Finance OHLCV bars.
+
+Run from scanner-core:
+
+```bash
+python trader-india/smc.py --symbols RELIANCE,TCS --interval 5m --range 5d --output trader/smc-watchlist.json
+python trader-trader-india/smc.py --universe trader-india/universe.csv --interval 15m
+```
+
+See trader-india/SMC_SKILL.md for workflow and limitations. This is an explainable OHLCV approximation, not institutional order-flow data or a copy of the linked SMC web app. It is research-only and never sends orders.
