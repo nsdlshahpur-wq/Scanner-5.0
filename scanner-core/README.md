@@ -146,7 +146,7 @@ Run from scanner-core:
 
 ```bash
 python trader-india/smc.py --symbols RELIANCE,TCS --interval 5m --range 5d --output trader/smc-watchlist.json
-python trader-trader-india/smc.py --universe trader-india/universe.csv --interval 15m
+python trader-india/smc.py --universe trader-india/universe.csv --interval 15m
 ```
 
 See trader-india/SMC_SKILL.md for workflow and limitations. This is an explainable OHLCV approximation, not institutional order-flow data or a copy of the linked SMC web app. It is research-only and never sends orders.
