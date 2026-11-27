@@ -164,10 +164,10 @@ def _crt_sweep(raw: list[Bar], direction: str, lookback: int = 18):
             reference = prior[-1]
             if direction == "BULLISH" and execution.low < reference.low and execution.close > reference.low:
                 found.append((index, {"label": label, "high": reference.high,
-                    "low": reference.low, "extreme": execution.low}))
+                    "low": reference.low, "extreme": execution.low, "timestamp": execution.timestamp}))
             elif direction == "BEARISH" and execution.high > reference.high and execution.close < reference.high:
                 found.append((index, {"label": label, "high": reference.high,
-                    "low": reference.low, "extreme": execution.high}))
+                    "low": reference.low, "extreme": execution.high, "timestamp": execution.timestamp}))
     if not found:
         return None
     return max(found, key=lambda item: item[0])[1]
@@ -231,6 +231,8 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
         return None
     if not _displacement(confirmation_bars, direction):
         return None
+    if crt["timestamp"] >= confirmation_bars[-1].timestamp:
+        return None
     zone = _recent_fvg(bars, direction)
     if zone is None:
         return None
@@ -276,7 +278,7 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
     score = min(100, score)
     if score < minimum_score:
         return None
-    return Setup(symbol, exchange, mode, direction, retest.timestamp.isoformat(),
+    return Setup(symbol, exchange, mode, direction, (retest.timestamp + timedelta(minutes=5 if mode == "intraday" else 60)).isoformat(),
         round(entry, 4), round(stop, 4), round(target, 4), round(rr, 2), score,
         crt["label"], round(crt["high"], 4), round(crt["low"], 4),
         round(crt["extreme"], 4), round(zone.low, 4), round(zone.high, 4),
