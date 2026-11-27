@@ -158,10 +158,9 @@ def _crt_sweep(raw: list[Bar], direction: str, lookback: int = 18):
             current = _latest_completed(series, asof, width)
             if current is None:
                 continue
-            prior = [x for x in series if x.timestamp < current.timestamp]
-            if not prior:
-                continue
-            reference = prior[-1]
+            # The latest completed CRT candle is the range to be swept by
+            # the current execution candle (not the candle before that).
+            reference = current
             if direction == "BULLISH" and execution.low < reference.low and execution.close > reference.low:
                 found.append((index, {"label": label, "high": reference.high,
                     "low": reference.low, "extreme": execution.low, "timestamp": execution.timestamp}))
@@ -265,13 +264,11 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
     for label, series, width in (("15M", resample(raw, 15), 15), ("1H", resample(raw, 60), 60)):
         completed = _latest_completed(series, last_raw.timestamp + timedelta(minutes=5), width)
         if completed:
-            prior = [x for x in series if x.timestamp < completed.timestamp]
-            if prior:
-                ref = prior[-1]
-                if direction == "BULLISH" and last_raw.low < ref.low and last_raw.close > ref.low:
-                    swept_windows.add(label)
-                if direction == "BEARISH" and last_raw.high > ref.high and last_raw.close < ref.high:
-                    swept_windows.add(label)
+            ref = completed
+            if direction == "BULLISH" and last_raw.low < ref.low and last_raw.close > ref.low:
+                swept_windows.add(label)
+            if direction == "BEARISH" and last_raw.high > ref.high and last_raw.close < ref.high:
+                swept_windows.add(label)
     if {"15M", "1H"}.issubset(swept_windows):
         score += 5
         confirmations.append("15M + 1H CRT confluence")
