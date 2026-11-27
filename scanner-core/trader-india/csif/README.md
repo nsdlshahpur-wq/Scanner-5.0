@@ -50,6 +50,14 @@ Run from the scanner-core/trader-india directory:
 
     python csif_cli.py --csv data/RELIANCE-5m.csv --symbol RELIANCE --exchange NSE --mode intraday --action backtest --capital 100000 --risk-pct 0.5 --fee-bps 5 --slippage-bps 5 --output output/reliance-backtest.json
 
+For a batch scan, put one symbol's timestamped 5-minute CSV in each file
+inside a directory, using filenames such as RELIANCE-5m.csv and TCS-5m.csv:
+
+    python csif_cli.py --data-dir data/nse-5m --exchange NSE --mode both --action scan --output output/nse-csif-signals.json
+
+A batch backtest runs each symbol independently; it is not yet a combined
+portfolio-level simulation with shared capital or correlation constraints.
+
 To explicitly open the first qualified signal in the local paper ledger, add
 --paper-open-first-signal to a scan command. This does not connect to Dhan or
 send an order. CSV columns must include timestamp, open, high, low, close and
