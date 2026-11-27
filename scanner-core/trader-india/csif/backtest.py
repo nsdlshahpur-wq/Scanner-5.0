@@ -34,14 +34,20 @@ def run_backtest(
         # Scan only on the current completed 5m close. Hourly swing signals
         # are emitted only when a complete 1h bucket becomes available.
         for signal in scan(history, symbol, exchange, modes, 80, min_rr):
-            signal_map[signal["timestamp"]] = signal
+            signal_map.setdefault(signal["timestamp"], []).append(signal)
 
         bar = bars[i]
         day = bar.timestamp.date().isoformat()
         daily_pnl = daily_realized.get(day, 0.0)
         if position:
             exit_price = reason = None
-            if position["direction"] == "BULLISH":
+            exit_time = bar.timestamp.isoformat()
+            if position["mode"] == "intraday" and day != position["entry_time"][:10]:
+                prior_bar = bars[i - 1]
+                exit_price = prior_bar.close
+                reason = "intraday_end_of_day"
+                exit_time = (prior_bar.timestamp + timedelta(minutes=5)).isoformat()
+            elif position["direction"] == "BULLISH":
                 if bar.low <= position["stop"]:
                     exit_price, reason = position["stop"], "stop"
                 elif bar.high >= position["target"]:
@@ -63,7 +69,7 @@ def run_backtest(
                 else:
                     cash -= position["qty"] * exit_price + costs
                 daily_realized[day] = daily_realized.get(day, 0.0) + pnl
-                trades.append({**position, "exit_time": bar.timestamp.isoformat(),
+                trades.append({**position, "exit_time": exit_time,
                     "exit": exit_price, "exit_reason": reason,
                     "gross_pnl": round(gross, 2), "costs": round(costs, 2),
                     "net_pnl": round(pnl, 2)})
@@ -74,7 +80,8 @@ def run_backtest(
             if daily_pnl > -initial_capital * daily_loss_pct / 100 and daily_count.get(day, 0) < max_trades_per_day:
                 signal_time_5m = (bar.timestamp.replace(second=0, microsecond=0) +
                                   timedelta(minutes=5)).isoformat()
-                signal = signal_map.get(signal_time_5m)
+                available_signals = signal_map.get(signal_time_5m, [])
+                signal = sorted(available_signals, key=lambda item: (item["score"], item["risk_reward"]), reverse=True)[0] if available_signals else None
                 if signal:
                     next_bar = bars[i + 1]
                     fill = next_bar.open
