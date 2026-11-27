@@ -54,7 +54,7 @@ def open_paper_position(path: str, signal: dict[str, Any], capital: float,
         "max_loss_estimate": round(qty * risk, 2)
     }
     ledger["positions"].append(position)
-    ledger["cash"] = float(ledger["cash"]) - qty * entry
+    ledger["cash"] = (float(ledger["cash"]) - qty * entry) if signal["direction"] == "BULLISH" else (float(ledger["cash"]) + qty * entry)
     _save(path, ledger)
     return position
 
@@ -86,7 +86,7 @@ def close_paper_position(path: str, position_id: str, exit_price: float,
     gross = (exit_price - position["entry"]) * position["quantity"] * direction
     costs = (position["entry"] + exit_price) * position["quantity"] * (fee_bps + slippage_bps) / 10000
     net = gross - costs
-    ledger["cash"] += position["quantity"] * position["entry"] + net
+    ledger["cash"] = (ledger["cash"] + position["quantity"] * exit_price - costs) if position["direction"] == "BULLISH" else (ledger["cash"] - position["quantity"] * exit_price - costs)
     ledger["positions"].remove(position)
     closed = {**position, "status": "CLOSED_PAPER",
               "closed_at": datetime.now(timezone.utc).isoformat(),
