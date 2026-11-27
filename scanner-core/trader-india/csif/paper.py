@@ -26,8 +26,9 @@ def _save(path: str, data: dict[str, Any]) -> None:
 
 
 def open_paper_position(path: str, signal: dict[str, Any], capital: float,
-                        risk_pct: float = 0.5, max_notional_pct: float = 20.0) -> dict[str, Any]:
-    if capital <= 0 or not 0 < risk_pct <= 1 or not 0 < max_notional_pct <= 100:
+                        risk_pct: float = 0.5, max_notional_pct: float = 20.0,
+                        max_total_risk_pct: float = 1.0, max_open_positions: int = 2) -> dict[str, Any]:
+    if capital <= 0 or not 0 < risk_pct <= 1 or not 0 < max_notional_pct <= 100 or not 0 < max_total_risk_pct <= 5 or max_open_positions < 1:
         raise ValueError("Invalid paper capital or risk parameters")
     if signal.get("direction") not in {"BULLISH", "BEARISH"}:
         raise ValueError("Signal direction must be BULLISH or BEARISH")
@@ -36,14 +37,21 @@ def open_paper_position(path: str, signal: dict[str, Any], capital: float,
     if risk <= 0 or abs(target - entry) / risk < 2:
         raise ValueError("Invalid stop or reward-to-risk below 1:2")
     ledger = _load(path, capital)
+    if len(ledger["positions"]) >= max_open_positions:
+        raise ValueError("Maximum concurrent paper positions reached")
     if any(x["symbol"] == signal["symbol"] and x["exchange"] == signal["exchange"]
            for x in ledger["positions"]):
         raise ValueError("An open paper position already exists for this exchange/symbol")
     risk_cash = capital * risk_pct / 100
     qty = min(math.floor(risk_cash / risk),
               math.floor(capital * max_notional_pct / 100 / entry))
+    if signal["direction"] == "BULLISH":
+        qty = min(qty, math.floor(max(0.0, float(ledger["cash"])) / entry))
     if qty < 1:
-        raise ValueError("Position size is zero under configured risk/notional caps")
+        raise ValueError("Position size is zero under configured risk/notional/cash caps")
+    existing_risk = sum(float(x.get("max_loss_estimate", 0)) for x in ledger["positions"])
+    if existing_risk + qty * risk > capital * max_total_risk_pct / 100:
+        raise ValueError("Aggregate open risk would exceed the configured portfolio risk cap")
     position = {
         "id": f"CSIF-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}",
         "status": "OPEN_PAPER", "opened_at": datetime.now(timezone.utc).isoformat(),
