@@ -42,6 +42,19 @@ Example:
     signals = scan(bars, "RELIANCE", "NSE", modes=("intraday", "swing"))
     print(signals)
 
+## CLI examples
+
+Run from the scanner-core/trader-india directory:
+
+    python csif_cli.py --csv data/RELIANCE-5m.csv --symbol RELIANCE --exchange NSE --mode both --action scan --output output/reliance-signals.json
+
+    python csif_cli.py --csv data/RELIANCE-5m.csv --symbol RELIANCE --exchange NSE --mode intraday --action backtest --capital 100000 --risk-pct 0.5 --fee-bps 5 --slippage-bps 5 --output output/reliance-backtest.json
+
+To explicitly open the first qualified signal in the local paper ledger, add
+--paper-open-first-signal to a scan command. This does not connect to Dhan or
+send an order. CSV columns must include timestamp, open, high, low, close and
+volume; timestamps must be timezone-consistent and bars must be 5-minute.
+
 ## Backtest protocol
 
 1. Begin with the NIFTY 50 constituent universe and five years of 5-minute
