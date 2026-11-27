@@ -7,10 +7,10 @@ import json
 import math
 
 
-def _load(path: str) -> dict[str, Any]:
+def _load(path: str, initial_capital: float = 100000.0) -> dict[str, Any]:
     file = Path(path)
     if not file.exists():
-        return {"mode": "PAPER_ONLY", "cash": 100000.0, "positions": [], "closed_trades": []}
+        return {"mode": "PAPER_ONLY", "cash": float(initial_capital), "initial_capital": float(initial_capital), "positions": [], "closed_trades": []}
     data = json.loads(file.read_text(encoding="utf-8"))
     if data.get("mode") != "PAPER_ONLY":
         raise ValueError("CSIF ledger must remain PAPER_ONLY")
@@ -35,7 +35,7 @@ def open_paper_position(path: str, signal: dict[str, Any], capital: float,
     risk = entry - stop if signal["direction"] == "BULLISH" else stop - entry
     if risk <= 0 or abs(target - entry) / risk < 2:
         raise ValueError("Invalid stop or reward-to-risk below 1:2")
-    ledger = _load(path)
+    ledger = _load(path, capital)
     if any(x["symbol"] == signal["symbol"] and x["exchange"] == signal["exchange"]
            for x in ledger["positions"]):
         raise ValueError("An open paper position already exists for this exchange/symbol")
