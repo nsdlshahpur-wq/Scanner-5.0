@@ -2,6 +2,7 @@
 from __future__ import annotations
 from typing import Any
 import math
+from datetime import timedelta
 from .engine import Bar, scan
 
 
@@ -57,7 +58,10 @@ def run_backtest(
                 costs = (position["entry"] + exit_price) * position["qty"] * (
                     fee_bps + slippage_bps) / 10000
                 pnl = gross - costs
-                cash += position["qty"] * position["entry"] + pnl
+                if position["direction"] == "BULLISH":
+                    cash += position["qty"] * exit_price - costs
+                else:
+                    cash -= position["qty"] * exit_price + costs
                 daily_realized[day] = daily_realized.get(day, 0.0) + pnl
                 trades.append({**position, "exit_time": bar.timestamp.isoformat(),
                     "exit": exit_price, "exit_reason": reason,
@@ -69,7 +73,7 @@ def run_backtest(
             daily_pnl = daily_realized.get(day, 0.0)
             if daily_pnl > -initial_capital * daily_loss_pct / 100 and daily_count.get(day, 0) < max_trades_per_day:
                 signal_time_5m = (bar.timestamp.replace(second=0, microsecond=0) +
-                                  __import__("datetime").timedelta(minutes=5)).isoformat()
+                                  timedelta(minutes=5)).isoformat()
                 signal = signal_map.get(signal_time_5m)
                 if signal:
                     next_bar = bars[i + 1]
@@ -79,7 +83,7 @@ def run_backtest(
                         stop = float(signal["stop"])
                         direction = signal["direction"]
                         risk_per_share = fill - stop if direction == "BULLISH" else stop - fill
-                        if risk_per_share > 0:
+                        if risk_per_share > 0 and abs(float(signal["target"]) - fill) / risk_per_share >= min_rr:
                             risk_cash = cash * risk_pct / 100
                             qty = min(math.floor(risk_cash / risk_per_share),
                                       math.floor(cash * 0.20 / fill))
@@ -91,10 +95,10 @@ def run_backtest(
                                     "entry": fill, "stop": stop, "target": float(signal["target"]),
                                     "qty": qty, "score": int(signal["score"]),
                                     "risk_per_share": risk_per_share}
-                                cash -= qty * fill
+                                cash = cash - qty * fill if direction == "BULLISH" else cash + qty * fill
                                 daily_count[day] = daily_count.get(day, 0) + 1
 
-        mark = cash + (position["qty"] * bar.close if position else 0.0)
+        mark = cash + ((position["qty"] * bar.close) if position and position["direction"] == "BULLISH" else (-position["qty"] * bar.close if position else 0.0))
         equity_curve.append(mark)
 
     if position:
@@ -106,7 +110,7 @@ def run_backtest(
         costs = (position["entry"] + exit_price) * position["qty"] * (
             fee_bps + slippage_bps) / 10000
         pnl = gross - costs
-        cash += position["qty"] * position["entry"] + pnl
+        cash = (cash + position["qty"] * exit_price - costs) if position["direction"] == "BULLISH" else (cash - position["qty"] * exit_price - costs)
         trades.append({**position, "exit_time": last.timestamp.isoformat(),
             "exit": exit_price, "exit_reason": "end_of_data",
             "gross_pnl": round(gross, 2), "costs": round(costs, 2),
