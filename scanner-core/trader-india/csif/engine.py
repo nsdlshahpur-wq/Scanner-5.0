@@ -261,18 +261,18 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
         confirmations.append("Discount/premium alignment")
     # Both windows must have a matching sweep for the final +5.
     last_raw = raw[-1]
-    both = False
-    for series, width in ((resample(raw, 15), 15), (resample(raw, 60), 60)):
+    swept_windows = set()
+    for label, series, width in (("15M", resample(raw, 15), 15), ("1H", resample(raw, 60), 60)):
         completed = _latest_completed(series, last_raw.timestamp + timedelta(minutes=5), width)
         if completed:
             prior = [x for x in series if x.timestamp < completed.timestamp]
             if prior:
                 ref = prior[-1]
                 if direction == "BULLISH" and last_raw.low < ref.low and last_raw.close > ref.low:
-                    both = True
+                    swept_windows.add(label)
                 if direction == "BEARISH" and last_raw.high > ref.high and last_raw.close < ref.high:
-                    both = True
-    if both:
+                    swept_windows.add(label)
+    if {"15M", "1H"}.issubset(swept_windows):
         score += 5
         confirmations.append("15M + 1H CRT confluence")
     score = min(100, score)
