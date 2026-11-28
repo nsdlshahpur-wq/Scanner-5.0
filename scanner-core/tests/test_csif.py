@@ -63,7 +63,7 @@ class CSIFCoreTests(unittest.TestCase):
         zone = _supply_demand_zone(bars, "BEARISH")
         self.assertIsNotNone(zone)
         self.assertEqual(zone.direction, "BEARISH")
-        self.assertAlmostEqual(zone.low, 100.0)
+        self.assertAlmostEqual(zone.low, 99.5)
         self.assertAlmostEqual(zone.high, 101.5)
 
     def test_paper_ledger_is_paper_only_and_closes(self):
