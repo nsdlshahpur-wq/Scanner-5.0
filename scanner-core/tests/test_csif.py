@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "trader-india"))
-from csif.engine import Bar, parse_bars, resample, confirmed_swings
+from csif.engine import Bar, parse_bars, resample, confirmed_swings, _supply_demand_zone
 from csif.paper import open_paper_position, close_paper_position
 
 
@@ -38,6 +38,33 @@ class CSIFCoreTests(unittest.TestCase):
                 for i, h in enumerate([10, 11, 15, 12, 11, 10])]
         highs, _ = confirmed_swings(bars, 1, 1)
         self.assertIn((3, 15), highs)
+
+
+    def test_bullish_demand_zone_is_detected_on_retest(self):
+        start = datetime(2026, 1, 1, 9, 15)
+        bars = [Bar(start + timedelta(minutes=5*i), 100, 101, 99, 100.2, 10)
+                for i in range(18)]
+        bars.append(Bar(start + timedelta(minutes=90), 100, 100.5, 98.5, 99.5, 10))
+        bars.append(Bar(start + timedelta(minutes=95), 99.6, 102.5, 99.4, 102.0, 20))
+        bars.append(Bar(start + timedelta(minutes=100), 100.0, 100.4, 99.0, 100.2, 15))
+        zone = _supply_demand_zone(bars, "BULLISH")
+        self.assertIsNotNone(zone)
+        self.assertEqual(zone.direction, "BULLISH")
+        self.assertAlmostEqual(zone.low, 98.5)
+        self.assertAlmostEqual(zone.high, 100.0)
+
+    def test_bearish_supply_zone_is_detected_on_retest(self):
+        start = datetime(2026, 1, 1, 9, 15)
+        bars = [Bar(start + timedelta(minutes=5*i), 100, 101, 99, 99.8, 10)
+                for i in range(18)]
+        bars.append(Bar(start + timedelta(minutes=90), 99.5, 101.5, 99.0, 100.5, 10))
+        bars.append(Bar(start + timedelta(minutes=95), 100.4, 100.6, 97.5, 98.0, 20))
+        bars.append(Bar(start + timedelta(minutes=100), 99.8, 101.0, 99.5, 99.7, 15))
+        zone = _supply_demand_zone(bars, "BEARISH")
+        self.assertIsNotNone(zone)
+        self.assertEqual(zone.direction, "BEARISH")
+        self.assertAlmostEqual(zone.low, 100.0)
+        self.assertAlmostEqual(zone.high, 101.5)
 
     def test_paper_ledger_is_paper_only_and_closes(self):
         signal = {"symbol": "RELIANCE", "exchange": "NSE", "mode": "intraday",
