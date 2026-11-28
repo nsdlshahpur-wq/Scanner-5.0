@@ -45,6 +45,10 @@ class Setup:
     sweep_extreme: float
     fvg_low: float
     fvg_high: float
+    sd_zone_type: str
+    sd_zone_low: float
+    sd_zone_high: float
+    sd_zone_created_at: str
     confirmations: list[str]
     invalidation: str
 
@@ -213,6 +217,55 @@ def _recent_fvg(bars: list[Bar], direction: str, max_age: int = 12):
     return None
 
 
+def _supply_demand_zone(bars: list[Bar], direction: str, max_age: int = 36):
+    """Find the latest confirmed demand/supply base before displacement.
+
+    A demand zone is the last bearish candle before a strong bullish impulse;
+    a supply zone is the last bullish candle before a strong bearish impulse.
+    Only completed candles before the current retest candle are considered.
+    """
+    if len(bars) < 20:
+        return None
+    history = bars[:-1]
+    current = bars[-1]
+    current_atr = atr(history, 14)
+    if current_atr is None:
+        return None
+    start = max(2, len(history) - max_age)
+    for impulse_index in range(len(history) - 1, start - 1, -1):
+        impulse = history[impulse_index]
+        body = abs(impulse.close - impulse.open)
+        directional = (impulse.close > impulse.open if direction == "BULLISH"
+                       else impulse.close < impulse.open)
+        if not directional or body < current_atr * 0.8:
+            continue
+        # Search the preceding three candles for the final opposing candle.
+        for base_index in range(impulse_index - 1, max(-1, impulse_index - 4), -1):
+            base = history[base_index]
+            opposing = (base.close < base.open if direction == "BULLISH"
+                        else base.close > base.open)
+            if not opposing:
+                continue
+            if direction == "BULLISH":
+                zone_low, zone_high = base.low, max(base.open, base.close)
+                zone_type = "DEMAND"
+                held = current.low <= zone_high and current.high >= zone_low and current.close > (zone_low + zone_high) / 2
+            else:
+                zone_low, zone_high = min(base.open, base.close), base.high
+                zone_type = "SUPPLY"
+                held = current.high >= zone_low and current.low <= zone_high and current.close < (zone_low + zone_high) / 2
+            if not held:
+                continue
+            # A completed close through the distal edge invalidates the zone.
+            later = history[base_index + 1:]
+            if direction == "BULLISH" and any(x.close < zone_low for x in later):
+                continue
+            if direction == "BEARISH" and any(x.close > zone_high for x in later):
+                continue
+            return Zone(zone_low, zone_high, base.timestamp, direction)
+    return None
+
+
 def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
                   mode: str, minimum_score: int = 80, min_rr: float = 2.0):
     if len(bars) < 60 or len(raw) < 600:
@@ -235,9 +288,15 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
     zone = _recent_fvg(bars, direction)
     if zone is None:
         return None
+    sd_zone = _supply_demand_zone(bars, direction)
+    if sd_zone is None:
+        return None
+    # Require the FVG entry area to overlap the active institutional zone.
+    if max(zone.low, sd_zone.low) > min(zone.high, sd_zone.high):
+        return None
     retest = bars[-1]
     entry = (zone.low + zone.high) / 2
-    stop = crt["extreme"]
+    stop = min(crt["extreme"], sd_zone.low) if direction == "BULLISH" else max(crt["extreme"], sd_zone.high)
     risk = entry - stop if direction == "BULLISH" else stop - entry
     if risk <= 0:
         return None
@@ -250,10 +309,11 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
     if rr < min_rr:
         return None
     confirmations = ["1H bias aligned", f"{crt['label']} CRT sweep + close back inside",
-                     "SMC MSS", "ICT displacement", "FVG retest"]
+                     "SMC MSS", "ICT displacement", "FVG retest",
+                     f"{'Demand' if direction == 'BULLISH' else 'Supply'} zone retest + FVG overlap"]
     # Weights: HTF 15, sweep 20, MSS 15, displacement 15, FVG 10,
     # retest 10, premium/discount 10, dual-CRT confluence 5.
-    score = 85
+    score = 90
     equilibrium = (crt["high"] + crt["low"]) / 2
     if (direction == "BULLISH" and entry <= equilibrium) or (direction == "BEARISH" and entry >= equilibrium):
         score += 10
@@ -279,6 +339,8 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
         round(entry, 4), round(stop, 4), round(target, 4), round(rr, 2), score,
         crt["label"], round(crt["high"], 4), round(crt["low"], 4),
         round(crt["extreme"], 4), round(zone.low, 4), round(zone.high, 4),
+        "DEMAND" if direction == "BULLISH" else "SUPPLY",
+        round(sd_zone.low, 4), round(sd_zone.high, 4), sd_zone.created_at.isoformat(),
         confirmations, "A completed close beyond the sweep extreme invalidates the setup")
 
 
