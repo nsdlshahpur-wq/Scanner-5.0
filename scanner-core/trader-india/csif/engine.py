@@ -296,6 +296,8 @@ def _entry_signal(bars: list[Bar], raw: list[Bar], symbol: str, exchange: str,
         return None
     retest = bars[-1]
     entry = (zone.low + zone.high) / 2
+    if not sd_zone.low <= entry <= sd_zone.high:
+        return None
     stop = min(crt["extreme"], sd_zone.low) if direction == "BULLISH" else max(crt["extreme"], sd_zone.high)
     risk = entry - stop if direction == "BULLISH" else stop - entry
     if risk <= 0:
