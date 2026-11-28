@@ -10,10 +10,20 @@ scanner is untouched. Initial execution mode is paper-only.
 - Swing execution: completed 1-hour bars resampled from 5-minute source data.
 - Directional filter: 1-hour 20/50 SMA alignment and fast-average slope.
 - Sequence: CRT sweep and close back into range -> SMC MSS -> displacement ->
-  three-candle FVG -> later FVG retest.
+  three-candle FVG -> later FVG retest -> active Supply/Demand zone retest.
+- Demand zone: last bearish candle before a confirmed bullish displacement;
+  Supply zone: last bullish candle before a confirmed bearish displacement.
+  Zone bounds use the candle wick and body edge, and a close through the distal
+  boundary invalidates the zone.
+- FVG and Supply/Demand ranges must overlap for a qualified entry. The signal
+  payload returns `sd_zone_type`, `sd_zone_low`, `sd_zone_high`, and
+  `sd_zone_created_at` so the chart layer can draw and label the rectangle.
+- Stop is placed beyond the more conservative of the CRT sweep extreme and
+  the relevant Supply/Demand zone edge.
 - Entry reference: FVG midpoint. Historical simulation attempts a next-bar
   open fill only if that open remains inside the FVG.
-- Minimum score: 80/100. The sequence gates are mandatory; a score cannot
+- Minimum score: 80/100. Supply/Demand detection, active-zone retest and FVG
+  overlap are mandatory sequence gates; a score cannot
   override a missing CRT sweep, MSS, displacement, FVG or retest.
 - Minimum reward/risk: 1:2.
 - Conservative research defaults: 0.5% capital risk per trade, 20% maximum
